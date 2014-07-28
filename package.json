@@ -2,7 +2,7 @@
   "name": "grove",
   "version": "0.0.0",
   "description": "Foundational JS library",
-  "main": "src/common/grove/index.js",
+  "main": "lib-node/grove/index.js",
   "scripts": {
     "test": "npm run-script test"
   },
