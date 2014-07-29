@@ -22,14 +22,22 @@ var factory = function(
     },
 
     bulkAlias: function(aliases) {
-      _.each(aliases, function(aliasName, moduleName) {
-        this.alias({module: moduleName, as: aliasName});
+      _.each(aliases, function(aliasNames, moduleName) {
+        if (!_.isArray(aliasNames)) {
+          aliasNames = [aliasNames]
+        }
+        _.each(aliasNames, function(aliasName) {
+          this.alias({module: moduleName, as: aliasName});
+        }, this);
       }, this);
-      console.log(this._aliases);
     },
 
     component: function(alias) {
-      return this._requireFun(this._aliases[alias]);
+      var mod = this._aliases[alias];
+      if (!mod) {
+        throw new Error("Invalid alias provided (no such module): `"+alias+"'");
+      }
+      return this._requireFun(mod);
     },
 
     c: function(alias) {
