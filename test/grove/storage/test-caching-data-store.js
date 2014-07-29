@@ -2,7 +2,7 @@
 
 var assert            = require("assert"),
     Promise           = require("bluebird"),
-    grove             = require("../../../src/common/grove"),
+    grove             = require("../../../lib-node/grove"),
     CachingDataStore  = grove.c("caching-data-store");
 
 Promise.onPossiblyUnhandledRejection(function(e, promise) {
@@ -33,7 +33,7 @@ describe("CachingDataStore", function() {
       .caught(function(err) {
         assert.equal(err, undefined);
       })
-      .finally(function() {
+      .lastly(function() {
         done();
       });
   });
@@ -53,14 +53,38 @@ describe("CachingDataStore", function() {
         return store.get("key-one");
       })
       .then(function(val) {
-        console.log(val);
         assert.ok(!val);
       })
       .caught(function(err) {
-        console.log(err.message, err.stack)
         assert.equal(err, undefined);
       })
-      .finally(function() {
+      .lastly(function() {
+        done();
+      });
+  });
+
+  it("should evict on `exists` check", function(done) {
+    var store = new CachingDataStore();
+    Promise
+      .attempt(function() {
+        return store.put("key-one", 1);
+      })
+      .then(function() {
+        return store.get("key-one");
+      })
+      .then(function(val) {
+        assert.equal(val, 1);
+        store.sequencer().advance();
+        return store.exists("key-one");
+      })
+      .then(function(exists) {
+        assert.ok(!exists);
+      })
+      .caught(function() {
+        console.log(err.message, err.stack);
+        assert.equal(err, undefined);
+      })
+      .lastly(function() {
         done();
       });
   });

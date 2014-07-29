@@ -3,14 +3,27 @@ var fs   = require("fs"),
 
 
 desc("Exports build artifacts for web, node");
-task("build", function() {
-  if (!fs.existsSync("./lib-node")) {
-    fs.mkdirSync("./lib-node");
-  }
-  spawn("rsync", ["-avL", "src/common/grove", "lib-node/"], {stdio: 'inherit'});
+task("build", ["export-artifacts"], function() {
 });
 
 desc("Run tests");
-task("test", function() {
-  spawn("npm", ["test"], {stdio: 'inherit'});
+task("test", ["export-artifacts", "run-tests"], function() {
 });
+
+
+task("export-artifacts", function() {
+  if (!fs.existsSync("./lib-node")) {
+    fs.mkdirSync("./lib-node");
+  }
+  var rsync = spawn("rsync", ["-avL", "src/common/grove", "lib-node/"], {stdio: 'inherit'});
+  rsync.on("close", function() {
+    complete();
+  })
+}, {async: true});
+
+task("run-tests", function() {
+  var npm =spawn("npm", ["test"], {stdio: 'inherit'});
+  npm.on("close", function() {
+    complete();
+  });
+}, {async: true});

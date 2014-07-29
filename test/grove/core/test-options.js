@@ -1,7 +1,7 @@
 "use strict";
 
 var assert   = require("assert"),
-    grove    = require("../../../src/common/grove"),
+    grove    = require("../../../lib-node/grove"),
     Options  = grove.c("options");
 
 describe("Options", function() {

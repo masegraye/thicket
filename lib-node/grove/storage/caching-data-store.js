@@ -13,7 +13,12 @@ var mod = function(
 
 
   /**
-   * A look-aside caching data store.
+   * A look-aside caching data store. Note: it's generally not useful to allow
+   * null/undefined stored values. When an item is evicted from the cache, a
+   * subsequent `get` call will return `undefined`, so it can be difficult to
+   * determine if there was a cache miss if the value you're storing is, in fact,
+   * `undefined`, unless you prefix every check with `exists`, which also does
+   * cache eviction on check.
    */
   var CachingDataStore = function() {
     this.initialize.apply(this, arguments);
@@ -54,6 +59,16 @@ var mod = function(
       return this._sequencer;
     },
 
+
+    /**
+     * Gets the value associated with the provided key. If the object has
+     * expired, it will be evicted from the cache, and `undefined` will
+     * be returned instead.
+     *
+     * @param key {string} (required)
+     * @async
+     * @returns {Promise<dynamic>} requested value
+     */
     get: Promise.method(function(key) {
       return Promise
         .bind(this)
@@ -65,7 +80,7 @@ var mod = function(
             return;
           }
 
-          if (!entry.isExpired(this._sequencer, this._ttl)) {
+          if (!entry.isExpired(this._sequencer.value(), this._ttl)) {
             if (this._shouldTouchOnRead) {
               entry.touch(this._sequencer.value());
             }
@@ -78,12 +93,25 @@ var mod = function(
           } else {
             return Promise
               .bind(this)
-              .remove(key)
-              .return();
+              .then(function() {
+                return this.remove(key)
+              })
+              .then(function() {
+                // .thenReturn is a lie.
+                return;
+              });
           }
         });
     }),
 
+    /**
+     * Stores the provided `val`, identified by `key`
+     *
+     * @param `key` {string}  (required) identifier for value to be stored
+     * @param `val` {dynamic} (required) value to be stored
+     * @async
+     * @returns {Promise<>}
+     */
     put: Promise.method(function(key, val) {
       return Promise
         .bind(this)
@@ -108,10 +136,19 @@ var mod = function(
             .then(function() {
               return this._backingStore.put(key, entry)
             })
-            .return();
+            .then(function() {
+              return;
+            });
         });
     }),
 
+    /**
+     * Removes the value associated with the provided `key`
+     *
+     * @param `key` {string} (required) identifier for value to be removed
+     * @async
+     * @returns {Promise<dynamic>} Removed value, if present in store.
+     */
     remove: Promise.method(function(key) {
       var val;
       return this._backingStore
@@ -126,7 +163,30 @@ var mod = function(
     }),
 
     exists: Promise.method(function(key){
-      return this._backingStore.exists(key);
+      // It's not sufficient to delegate this call to the underlying
+      // backing store. We need to perform eviction, as a subsequent call
+      // to get would do the same. If the `exists` check says it exists,
+      // bet it doesn't when we `get`, then `exists` is a worthless operation.
+      return Promise
+        .bind(this)
+        .then(function() {
+          return this._backingStore.get(key);
+        })
+        .then(function(entry) {
+            if (!entry) {
+              return false;
+            } else {
+              if (!entry.isExpired(this._sequencer.value(), this._ttl)) {
+                return true;
+              } else {
+                return this._backingStore.remove(key)
+                  .then(function() {
+                    entry.dispose();
+                  })
+                  .thenReturn(false);
+              }
+            }
+        });
     }),
 
     clear: Promise.method(function() {
