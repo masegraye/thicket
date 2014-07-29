@@ -65,7 +65,7 @@ var mod = function(
             return;
           }
 
-          if (!entry.isExpired(this._sequencer, this._ttl)) {
+          if (!entry.isExpired(this._sequencer.value(), this._ttl)) {
             if (this._shouldTouchOnRead) {
               entry.touch(this._sequencer.value());
             }
@@ -78,8 +78,13 @@ var mod = function(
           } else {
             return Promise
               .bind(this)
-              .remove(key)
-              .return();
+              .then(function() {
+                return this.remove(key)
+              })
+              .then(function() {
+                // .thenReturn is a lie.
+                return;
+              });
           }
         });
     }),
@@ -108,7 +113,9 @@ var mod = function(
             .then(function() {
               return this._backingStore.put(key, entry)
             })
-            .return();
+            .then(function() {
+              return;
+            });
         });
     }),
 

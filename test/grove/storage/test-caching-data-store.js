@@ -37,4 +37,32 @@ describe("CachingDataStore", function() {
         done();
       });
   });
+
+  it("should evict entries when expired", function(done) {
+    var store = new CachingDataStore();
+    Promise
+      .attempt(function() {
+        return store.put("key-one", 1);
+      })
+      .then(function() {
+        return store.get("key-one");
+      })
+      .then(function(val) {
+        assert.equal(val, 1);
+        store.sequencer().advance();
+        return store.get("key-one");
+      })
+      .then(function(val) {
+        console.log(val);
+        assert.ok(!val);
+      })
+      .caught(function(err) {
+        console.log(err.message, err.stack)
+        assert.equal(err, undefined);
+      })
+      .finally(function() {
+        done();
+      });
+  });
+
 });
