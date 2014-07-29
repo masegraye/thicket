@@ -12,6 +12,7 @@ var factory = function(
     "./storage/in-memory-data-store"    : "in-memory-data-store",
     "./storage/caching-data-store"      : "caching-data-store",
     "./core/sequencer/unit-sequencer"   : ["unit-sequencer", "sequencer"],
+    "./core/sequencer/clock-sequencer"  : "clock-sequencer",
     "./time/clock/logical-clock"        : "logical-clock",
     "./time/clock/system-clock"         : "system-clock"
   });

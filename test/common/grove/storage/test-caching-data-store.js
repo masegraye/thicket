@@ -3,7 +3,9 @@
 var assert            = require("assert"),
     Promise           = require("bluebird"),
     grove             = require("../../../../lib-node/grove"),
-    CachingDataStore  = grove.c("caching-data-store");
+    CachingDataStore  = grove.c("caching-data-store"),
+    LogicalClock      = grove.c("logical-clock"),
+    ClockSequencer    = grove.c("clock-sequencer");
 
 Promise.onPossiblyUnhandledRejection(function(e, promise) {
     throw e;
@@ -49,8 +51,10 @@ describe("CachingDataStore", function() {
       })
       .then(function(val) {
         assert.equal(val, 1);
-        store.sequencer().advance();
-        return store.get("key-one");
+        return store.sequencer().advance()
+          .then(function() {
+            return store.get("key-one");
+          });
       })
       .then(function(val) {
         assert.ok(!val);
@@ -74,8 +78,10 @@ describe("CachingDataStore", function() {
       })
       .then(function(val) {
         assert.equal(val, 1);
-        store.sequencer().advance();
-        return store.exists("key-one");
+        return store.sequencer().advance()
+          .then(function() {
+            store.exists("key-one");
+          });
       })
       .then(function(exists) {
         assert.ok(!exists);
@@ -87,6 +93,51 @@ describe("CachingDataStore", function() {
       .lastly(function() {
         done();
       });
+  });
+
+  it("should work with an externally owned sequencer", function(done) {
+    var clock     = new LogicalClock();
+    var sequencer = new ClockSequencer({ clock: clock });
+    // 5 second ttl
+    var store     = new CachingDataStore({ sequencer: sequencer, ttl: 5000 });
+    Promise
+      .attempt(function() {
+        return store.put("key-one", 1)
+          .then(function() {
+            return store.get("key-one");
+          });
+      })
+      .then(function(val) {
+        assert.ok(val, 1);
+        return clock.advanceTime({ by: 2500 })
+          .then(function() {
+            return sequencer.advance();
+          })
+          .then(function() {
+            return store.get("key-one");
+          })
+      })
+      .then(function(val) {
+        assert.ok(val, 1);
+        return clock.advanceTime({ to: 5001 })
+          .then(function() {
+            return sequencer.advance();
+          })
+          .then(function() {
+            return store.exists("key-one");
+          })
+      })
+      .then(function(exists) {
+        assert.ok(!exists);
+      })
+      .caught(function(err) {
+        assert.equal(err && err.message, false);
+        throw err;
+      })
+      .lastly(function() {
+        done();
+      })
+
   });
 
 });

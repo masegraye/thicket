@@ -6,12 +6,8 @@ var mod = function(
 ) {
 
   /**
-   * Clock protocol requires the following method:
-   *
-   *   Clock#getTime() -> {Promise<number>} the time, in milliseconds since epoch
-   *
+   * A Clock which delegates to the system clock.
    */
-
   var SystemClock = function() {
     this.initialize.apply(this, arguments);
   }

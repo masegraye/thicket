@@ -5,7 +5,10 @@ var mod = function(
   Promise,
   Options
 ) {
-
+  /**
+   * A Clock which allows manually manipulating the underlying time value,
+   * irrespective of real time. Useful for testing.
+   */
   var LogicalClock = function() {
     this.initialize.apply(this, arguments);
   }
@@ -33,29 +36,28 @@ var mod = function(
      * @param opts.to {number} absolute time to set clock to. Must be larger
      *                         than the current time
      * @param opts.by {number} offset to add to current time. Must be positive.
+     *                         Defaults to `1` if neither `opts.to` or `opts.by`
+     *                         are specified.
      * @async
      * @returns {Promise<number>} result of `LogicalClock#getTime()`
      */
     advanceTime: Promise.method(function(opts){
       opts = Options.fromObject(opts);
-      var by = opts.getOrElse("by", undefined),
+      var by = opts.getOrElse("by", 1),
           to = opts.getOrElse("to", undefined);
-      if (!_.isUndefined(by)) {
-        if (by < 0) {
-          throw new Error("LogicalClock#advanceTime() requires forward movement of time");
-        }
-        this._currentTime = this._currentTime + by;
-      } else if (!_.isUndefined(to)) {
+      if (!_.isUndefined(to)) {
         if (to < this._currentTime) {
           throw new Error("LogicalClock#advanceTime() requires forward movement of time")
         }
         this._currentTime = to;
       } else {
-        throw new Error("LogicalClock#advanceTime() requires a time delta");
+        if (by < 0) {
+          throw new Error("LogicalClock#advanceTime() requires forward movement of time");
+        }
+        this._currentTime = this._currentTime + by;
       }
       return this.getTime();
     })
-
   });
 
   return LogicalClock;
