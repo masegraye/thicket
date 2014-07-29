@@ -22,8 +22,13 @@ var factory = function(
     },
 
     bulkAlias: function(aliases) {
-      _.each(aliases, function(aliasName, moduleName) {
-        this.alias({module: moduleName, as: aliasName});
+      _.each(aliases, function(aliasNames, moduleName) {
+        if (!_.isArray(aliasNames)) {
+          aliasNames = [aliasNames]
+        }
+        _.each(aliasNames, function(aliasName) {
+          this.alias({module: moduleName, as: aliasName});
+        }, this);
       }, this);
     },
 

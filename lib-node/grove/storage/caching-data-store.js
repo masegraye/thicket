@@ -5,7 +5,7 @@ var mod = function(
   Promise,
   Options,
   InMemoryDataStore,
-  Sequencer
+  UnitSequencer
 ) {
 
   // Appropriate for the default sequencer (non-temporal)
@@ -40,7 +40,7 @@ var mod = function(
       // for scheduling the sequencer to advance with time. This keeps the
       // CachingDataStore's lifecycle simple with respect to time.
       this._sequencer = opts.getOrElseFn("sequencer", function() {
-        return new Sequencer();
+        return new UnitSequencer();
       });
 
       // By default, we delegate to an in-memory store. Fine for simple
@@ -241,5 +241,5 @@ module.exports = mod(
   require("bluebird"),
   require("../core/options"),
   require("./in-memory-data-store"),
-  require("./internal/sequencer")
+  require("../core/sequencer/unit-sequencer")
 );
