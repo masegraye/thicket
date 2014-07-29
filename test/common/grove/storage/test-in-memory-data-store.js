@@ -2,7 +2,7 @@
 
 var assert            = require("assert"),
     Promise           = require("bluebird"),
-    grove             = require("../../../lib-node/grove"),
+    grove             = require("../../../../lib-node/grove"),
     InMemoryDataStore = grove.c("in-memory-data-store");
 
 Promise.onPossiblyUnhandledRejection(function(e, promise) {
