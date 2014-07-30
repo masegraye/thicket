@@ -6,15 +6,18 @@ var factory = function(
   var c = new ComponentLoader(require);
 
   c.bulkAlias({
-    "./util/component-loader"           : "component-loader",
-    "./core/options"                    : "options",
-    "./core/lang"                       : "lang",
-    "./storage/in-memory-data-store"    : "in-memory-data-store",
-    "./storage/caching-data-store"      : "caching-data-store",
-    "./core/sequencer/unit-sequencer"   : ["unit-sequencer", "sequencer"],
-    "./core/sequencer/clock-sequencer"  : "clock-sequencer",
-    "./time/clock/logical-clock"        : "logical-clock",
-    "./time/clock/system-clock"         : "system-clock"
+    "./util/component-loader"                       : "component-loader",
+    "./core/options"                                : "options",
+    "./core/lang"                                   : "lang",
+    "./storage/in-memory-data-store"                : "in-memory-data-store",
+    "./storage/caching-data-store"                  : "caching-data-store",
+    "./core/sequencer/unit-sequencer"               : ["unit-sequencer", "sequencer"],
+    "./core/sequencer/clock-sequencer"              : "clock-sequencer",
+    "./time/clock/logical-clock"                    : "logical-clock",
+    "./time/clock/system-clock"                     : "system-clock",
+    "./appkit/configuration-magic"                  : "configuration-magic",
+    "./appkit/config/scoped-configuration-resolver" : "scoped-configuration-resolver",
+    "./appkit/config/scoped-configuration"          : ["scoped-configuration", "config/scoped-configuration"]
   });
 
   return c;
