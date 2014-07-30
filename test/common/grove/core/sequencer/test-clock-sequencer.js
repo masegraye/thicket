@@ -6,7 +6,7 @@ var assert         = require("assert"),
     LogicalClock   = grove.c("logical-clock"),
     ClockSequencer = grove.c("clock-sequencer");
 
-describe("UnitSequencer", function() {
+describe("ClockSequencer", function() {
   it("should advance on demand", function(done) {
     var clock = new LogicalClock();
     var sequencer = new ClockSequencer({
