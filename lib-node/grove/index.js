@@ -18,7 +18,9 @@ var factory = function(
     "./time/clock/system-clock"                     : "system-clock",
     "./appkit/configuration-magic"                  : "configuration-magic",
     "./appkit/config/scoped-configuration-resolver" : "scoped-configuration-resolver",
-    "./appkit/config/scoped-configuration"          : ["scoped-configuration", "config/scoped-configuration"]
+    "./appkit/config/scoped-configuration"          : ["scoped-configuration", "config/scoped-configuration"],
+    "./appkit/app"                                  : "app",
+    "./runtime"                                     : "runtime"
   });
 
   return c;
