@@ -9,6 +9,7 @@ var factory = function(
     "./util/component-loader"                       : "component-loader",
     "./core/options"                                : "options",
     "./core/lang"                                   : "lang",
+    "./core/ref"                                    : "ref",
     "./storage/in-memory-data-store"                : "in-memory-data-store",
     "./storage/caching-data-store"                  : "caching-data-store",
     "./core/sequencer/unit-sequencer"               : ["unit-sequencer", "sequencer"],
