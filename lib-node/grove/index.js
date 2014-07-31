@@ -19,7 +19,8 @@ var factory = function(
     "./appkit/configuration-magic"                  : "configuration-magic",
     "./appkit/config/scoped-configuration-resolver" : "scoped-configuration-resolver",
     "./appkit/config/scoped-configuration"          : ["scoped-configuration", "config/scoped-configuration"],
-    "./appkit/app"                                  : "app"
+    "./appkit/app"                                  : "app",
+    "./runtime"                                     : "runtime"
   });
 
   return c;
