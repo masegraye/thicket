@@ -5,7 +5,7 @@ var mod = function(
 ) {
 
   /**
-   * A ref whose boxed value is another ref.
+   * A ref whose boxed value is
    */
   var DelegatingRef = function() {
     this.initialize.apply(this, arguments);

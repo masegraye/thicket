@@ -3,7 +3,10 @@
 var mod = function(
   _,
   Promise,
-  Options
+  Options,
+  Runtime,
+
+  ProcessKeepAlive
 ) {
 
   var App = function() {
@@ -12,10 +15,28 @@ var mod = function(
 
   _.extend(App.prototype, {
     initialize: function(opts) {
+      opts = Options.fromObject(opts);
       this._config = opts.getOrError("configuration");
+
+      // The default Runtime has sensible defaults.
+      this._runtime = opts.getOrElseFn("runtime", function() {
+        return new Runtime();
+      });
+
+      this._keepAlive = new ProcessKeepAlive({
+        scheduler: this._runtime.scheduler()
+      });
     },
-    start: Promise.method(function() {}),
-    stop: Promise.method(function() {}),
+
+    start: Promise.method(function() {
+      this._keepAlive.start();
+      return this.up();
+    }),
+
+    stop: Promise.method(function() {
+      this._keepAlive.stop();
+      return this.down();
+    }),
 
     /**
      * TODO: Doc. Subclass should override.
@@ -34,5 +55,7 @@ var mod = function(
 module.exports = mod(
   require("underscore"),
   require("bluebird"),
-  require("../core/options")
+  require("../core/options"),
+  require("../runtime"),
+  require("./internal/process-keep-alive")
 );
