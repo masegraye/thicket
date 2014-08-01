@@ -1,7 +1,7 @@
 {
   "name": "grove",
   "version": "0.0.0",
-  "description": "Foundational JS library",
+  "description": "Foundational library for building robust, testable, cohesive JavaScript applications.",
   "main": "lib-node/grove/index.js",
   "scripts": {
     "test": "npm run-script test"
