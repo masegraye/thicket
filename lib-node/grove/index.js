@@ -21,7 +21,8 @@ var factory = function(
     "./appkit/config/scoped-configuration"          : ["scoped-configuration", "config/scoped-configuration"],
     "./appkit/app"                                  : "app",
     "./runtime"                                     : "runtime",
-    "./logging/logger"                              : "logger"
+    "./logging/logger"                              : "logger",
+    "./logging/appenders/console-log-appender"      : ["appenders/console-log", "console-log-appender"]
   });
 
   return c;
