@@ -23,7 +23,9 @@ var mod = function(
       this._console = opts.getOrElse("console", console);
       this._timeDelegate = opts.getOrElse("timeDelegate", function(){
         var d = new Date();
-        return [d.getUTCFullYear(), p(d.getUTCMonth()), p(d.getUTCDay())].join("/") + " " + [p(d.getUTCHours()), p(d.getUTCMinutes()), p(d.getUTCSeconds())].join(":") + "." + d.getUTCMilliseconds();
+        return [d.getUTCFullYear(), p(d.getUTCMonth()), p(d.getUTCDay())].join("/") +
+          " " + [p(d.getUTCHours()), p(d.getUTCMinutes()), p(d.getUTCSeconds())].join(":") +
+          "." + d.getUTCMilliseconds();
       });
     },
 
