@@ -4,7 +4,9 @@ var _       = require("underscore"),
     Promise = require("bluebird"),
     assert  = require("assert"),
     grove   = require("../../../../lib-node/grove"),
-    App     = grove.c("app");
+    App     = grove.c("app"),
+    Logger  = grove.c("logger"),
+    CLA     = grove.c("appenders/console-log");
 
 describe("App", function() {
   it("should be defined", function() {
@@ -12,6 +14,10 @@ describe("App", function() {
   });
 
   it("should start and stop", function(done) {
+    Logger.resetRootLogger();
+    // Logger.root().addAppender(new CLA());
+    // Logger.root().setLogLevel(Logger.Level.Debug);
+
     var MyApp = function() {
       this.initialize.apply(this, arguments);
     };
@@ -51,6 +57,7 @@ describe("App", function() {
         assert.equal(err && err.message, "");
       })
       .lastly(function() {
+        Logger.resetRootLogger();
         done();
       });
   });

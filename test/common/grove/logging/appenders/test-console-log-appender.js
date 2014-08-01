@@ -15,7 +15,7 @@ describe("ConsoleLogAppender", function() {
     var c = {
       log: function(meta, arg1, arg2){
         callCount++;
-        assert.equal(meta, "[Debug][Test][NOW]");
+        assert.equal(meta, "[Debug][NOW][Test]");
         assert.equal(arg1, "one");
         assert.equal(arg2, "two");
       }

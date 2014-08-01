@@ -9,12 +9,21 @@ var mod = function(
     this.initialize.apply(this, arguments);
   };
 
+  var p = function(num) {
+    if (("" + num).length === 1) {
+      return "0" + num;
+    } else {
+      return num;
+    }
+  };
+
   _.extend(ConsoleLogAppender.prototype, {
     initialize: function(opts) {
       opts = Options.fromObject(opts);
       this._console = opts.getOrElse("console", console);
       this._timeDelegate = opts.getOrElse("timeDelegate", function(){
-        return new Date();
+        var d = new Date();
+        return [d.getUTCFullYear(), p(d.getUTCMonth()), p(d.getUTCDay())].join("/") + " " + [p(d.getUTCHours()), p(d.getUTCMinutes()), p(d.getUTCSeconds())].join(":") + "." + d.getUTCMilliseconds();
       });
     },
 
@@ -24,7 +33,7 @@ var mod = function(
       if (furthestAncestor) {
         loggerName = furthestAncestor;
       }
-      this._log(["["+logLevelName+"]["+loggerName+"]["+this._getTime()+"]"].concat(args));
+      this._log(["["+logLevelName+"]["+this._getTime()+"]["+loggerName+"]"].concat(args));
     },
 
     _getTime: function() {

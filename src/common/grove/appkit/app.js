@@ -3,15 +3,17 @@
 var mod = function(
   _,
   Promise,
+  Logger,
   Options,
   Runtime,
 
   ProcessKeepAlive
 ) {
+  var Log = Logger.create("App");
 
   var App = function() {
     this.initialize.apply(this, arguments);
-  }
+  };
 
   _.extend(App.prototype, {
     initialize: function(opts) {
@@ -29,12 +31,16 @@ var mod = function(
     },
 
     start: Promise.method(function() {
+      Log.debug("Starting App");
       this._keepAlive.start();
+      Log.debug("Calling App#up()");
       return this.up();
     }),
 
     stop: Promise.method(function() {
+      Log.debug("Stopping App");
       this._keepAlive.stop();
+      Log.debug("Calling App#down()");
       return this.down();
     }),
 
@@ -55,6 +61,7 @@ var mod = function(
 module.exports = mod(
   require("underscore"),
   require("bluebird"),
+  require("../logging/logger"),
   require("../core/options"),
   require("../runtime"),
   require("./internal/process-keep-alive")
