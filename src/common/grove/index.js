@@ -20,7 +20,8 @@ var factory = function(
     "./appkit/config/scoped-configuration-resolver" : "scoped-configuration-resolver",
     "./appkit/config/scoped-configuration"          : ["scoped-configuration", "config/scoped-configuration"],
     "./appkit/app"                                  : "app",
-    "./runtime"                                     : "runtime"
+    "./runtime"                                     : "runtime",
+    "./logging/logger"                              : "logger"
   });
 
   return c;
