@@ -15,7 +15,7 @@ var mod = function(
       this._console = opts.getOrElse("console", console);
       this._timeDelegate = opts.getOrElse("timeDelegate", function(){
         return new Date();
-      })
+      });
     },
 
     log: function(loggerName, descendants, logLevel, logLevelName, args) {
