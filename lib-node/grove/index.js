@@ -10,6 +10,7 @@ var factory = function(
     "./core/options"                                : "options",
     "./core/lang"                                   : "lang",
     "./core/ref"                                    : "ref",
+    "./core/state-guard"                            : "state-guard",
     "./storage/in-memory-data-store"                : "in-memory-data-store",
     "./storage/caching-data-store"                  : "caching-data-store",
     "./core/sequencer/unit-sequencer"               : ["unit-sequencer", "sequencer"],

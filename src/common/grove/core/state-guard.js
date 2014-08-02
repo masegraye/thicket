@@ -2,7 +2,7 @@
 
 var mod = function(
   _,
-  Promise,
+  Promise
 ) {
 
   var StateGuard = function() {
@@ -91,7 +91,7 @@ var mod = function(
       return _.bind(function() {
         return this.denyAsync.apply(this, args)
       }, this);
-    }
+    },
 
 
     ensure: function() {
