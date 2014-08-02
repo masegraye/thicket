@@ -97,7 +97,7 @@ var mod = function(
     ensure: function() {
       var states = aryOrVariadicToArray(arguments);
       checkValidStatesOrThrow(this._validStates, states);
-      var missing = _.reject(state, function(state) {
+      var missing = _.reject(states, function(state) {
         return this._applied(state);
       }, this);
 
