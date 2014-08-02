@@ -70,11 +70,13 @@ var mod = function(
     deny: function() {
       var states = aryOrVariadicToArray(arguments);
       checkValidStatesOrThrow(this._validStates, states);
-      var denied = _.reject(states, function(state) {
-        return !this._appliedStates[state];
+
+      var applied = _.filter(states, function(state) {
+        return this._appliedStates[state];
       }, this);
-      if (denied.length > 0) {
-        throw new Error("State denial requested, but applied: " + pretty(state));
+
+      if (applied.length > 0) {
+        throw new Error("State denial requested, but applied: " + pretty(applied));
       }
 
       return this;
@@ -95,6 +97,13 @@ var mod = function(
     ensure: function() {
       var states = aryOrVariadicToArray(arguments);
       checkValidStatesOrThrow(this._validStates, states);
+      var missing = _.reject(state, function(state) {
+        return this._applied(state);
+      }, this);
+
+      if (missing.length > 0) {
+        throw new Error("State ensurance requested, but not applied: " + pretty(missing));
+      }
     },
 
     ensureAsync: Promise.method(function() {
