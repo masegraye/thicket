@@ -24,10 +24,7 @@ var mod = function(
     },
     start: function() {
       Log.debug("Starting ProcessKeepAlive");
-      this._timeoutId = this._scheduler.get().schedule(
-        this._cycle,
-        TEN_MINUTES_IN_MILLISECONDS
-      );
+      this._cycle();
     },
     stop: function() {
       Log.debug("Stopping ProcessKeepAlive");
