@@ -41,7 +41,6 @@ var mod = function(
       }, this);
     },
 
-
     unapply: function() {
       var states = aryOrVariadicToArray(arguments);
       checkValidStatesOrThrow(this._validStates, states);
@@ -65,7 +64,6 @@ var mod = function(
         return this.unapplyAsync.apply(this, args)
       }, this);
     },
-
 
     deny: function() {
       var states = aryOrVariadicToArray(arguments);
@@ -93,17 +91,17 @@ var mod = function(
       }, this);
     },
 
-
     ensure: function() {
       var states = aryOrVariadicToArray(arguments);
       checkValidStatesOrThrow(this._validStates, states);
       var missing = _.reject(states, function(state) {
-        return this._applied(state);
+        return this._appliedStates[state];
       }, this);
 
       if (missing.length > 0) {
         throw new Error("State ensurance requested, but not applied: " + pretty(missing));
       }
+      return this;
     },
 
     ensureAsync: Promise.method(function() {
@@ -116,7 +114,6 @@ var mod = function(
         return this.ensureAsync.apply(this, args);
       }, this);
     },
-
 
     applied: function() {
       var states = aryOrVariadicToArray(arguments);
@@ -140,7 +137,7 @@ var mod = function(
   });
 
   var aryOrVariadicToArray = function(args) {
-    return _.chain(args).toArray().flatten();
+    return _.chain(args).toArray().flatten().value();
   };
 
   var checkValidStatesOrThrow = function(validStatesMap, states) {
