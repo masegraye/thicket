@@ -2,9 +2,9 @@
 "use strict";
 
 var assert             = require("assert"),
-    grove              = require("../../../../../lib-node/grove"),
-    Logger             = grove.c("logger"),
-    ConsoleLogAppender = grove.c("appenders/console-log");
+    thicket              = require("../../../../../lib-node/thicket"),
+    Logger             = thicket.c("logger"),
+    ConsoleLogAppender = thicket.c("appenders/console-log");
 
 describe("ConsoleLogAppender", function() {
   it("should log to the provided console", function() {

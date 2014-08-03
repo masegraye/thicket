@@ -2,9 +2,9 @@
 
 var assert         = require("assert"),
     Promise        = require("bluebird"),
-    grove          = require("../../../../../lib-node/grove"),
-    LogicalClock   = grove.c("logical-clock"),
-    ClockSequencer = grove.c("clock-sequencer");
+    thicket          = require("../../../../../lib-node/thicket"),
+    LogicalClock   = thicket.c("logical-clock"),
+    ClockSequencer = thicket.c("clock-sequencer");
 
 describe("ClockSequencer", function() {
   it("should advance on demand", function(done) {

@@ -2,8 +2,8 @@
 
 var assert       = require("assert"),
     Promise      = require("bluebird"),
-    grove        = require("../../../../../lib-node/grove"),
-    LogicalClock = grove.c("logical-clock");
+    thicket        = require("../../../../../lib-node/thicket"),
+    LogicalClock = thicket.c("logical-clock");
 
 describe("LogicalClock", function() {
   it("should be defined", function() {

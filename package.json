@@ -1,8 +1,8 @@
 {
-  "name": "grove",
+  "name": "thicket",
   "version": "0.0.1",
   "description": "Foundational library for building robust, testable, cohesive JavaScript applications.",
-  "main": "lib-node/grove/index.js",
+  "main": "lib-node/thicket/index.js",
   "scripts": {
     "test": "npm run-script test"
   },
@@ -13,7 +13,7 @@
     "underscore": "= 1.6.0"
   },
   "bugs": {
-    "url": "https://github.com/maseb/grovejs/issues"
+    "url": "https://github.com/maseb/thicketjs/issues"
   },
   "scripts": {
     "test" : "mocha --reporter spec test/**/test-*.js"

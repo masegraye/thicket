@@ -1,4 +1,4 @@
-grove
+thicket
 =====
 
 Foundational library for building robust, testable, cohesive JavaScript applications.

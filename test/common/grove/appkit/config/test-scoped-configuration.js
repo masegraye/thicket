@@ -1,8 +1,8 @@
 "use strict";
 
 var assert              = require("assert"),
-    grove               = require("../../../../../lib-node/grove"),
-    ScopedConfiguration = grove.c("scoped-configuration");
+    thicket               = require("../../../../../lib-node/thicket"),
+    ScopedConfiguration = thicket.c("scoped-configuration");
 
 describe("ScopedConfiguration", function() {
   it("should resolve blobs regardless of scope order, and unions override in order of number of scopes", function() {

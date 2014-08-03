@@ -1,8 +1,8 @@
 
 var assert     = require("assert"),
     Promise    = require("bluebird"),
-    grove      = require("../../../../lib-node/grove"),
-    StateGuard = grove.c("state-guard");
+    thicket      = require("../../../../lib-node/thicket"),
+    StateGuard = thicket.c("state-guard");
 
 describe("StateGuard", function() {
   it("should chain", function() {

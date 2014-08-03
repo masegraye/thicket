@@ -2,10 +2,10 @@
 
 var assert            = require("assert"),
     Promise           = require("bluebird"),
-    grove             = require("../../../../lib-node/grove"),
-    CachingDataStore  = grove.c("caching-data-store"),
-    LogicalClock      = grove.c("logical-clock"),
-    ClockSequencer    = grove.c("clock-sequencer");
+    thicket             = require("../../../../lib-node/thicket"),
+    CachingDataStore  = thicket.c("caching-data-store"),
+    LogicalClock      = thicket.c("logical-clock"),
+    ClockSequencer    = thicket.c("clock-sequencer");
 
 Promise.onPossiblyUnhandledRejection(function(e, promise) {
     throw e;

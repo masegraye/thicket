@@ -1,6 +1,6 @@
 var assert                      = require("assert"),
-    grove                       = require("../../../../../lib-node/grove"),
-    ScopedConfigurationResolver = grove.c("scoped-configuration-resolver");
+    thicket                       = require("../../../../../lib-node/thicket"),
+    ScopedConfigurationResolver = thicket.c("scoped-configuration-resolver");
 
 describe("ScopedConfigurationResolver", function() {
   it("should be defined", function() {

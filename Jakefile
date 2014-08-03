@@ -15,7 +15,7 @@ task("export-artifacts", function() {
   if (!fs.existsSync("./lib-node")) {
     fs.mkdirSync("./lib-node");
   }
-  var rsync = spawn("rsync", ["-avL", "src/common/grove", "lib-node/"], {stdio: 'inherit'});
+  var rsync = spawn("rsync", ["-avL", "src/common/thicket", "lib-node/"], {stdio: 'inherit'});
   rsync.on("close", function() {
     complete();
   })

@@ -1,8 +1,8 @@
 "use strict";
 
 var assert = require("assert"),
-    grove  = require("../../../../lib-node/grove"),
-    Ref    = grove.c("ref");
+    thicket  = require("../../../../lib-node/thicket"),
+    Ref    = thicket.c("ref");
 
 describe("Ref", function() {
   describe("Standard Ref", function() {

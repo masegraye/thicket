@@ -2,8 +2,8 @@
 
 var assert        = require("assert"),
     Promise       = require("bluebird"),
-    grove         = require("../../../../../lib-node/grove"),
-    UnitSequencer = grove.c("unit-sequencer");
+    thicket         = require("../../../../../lib-node/thicket"),
+    UnitSequencer = thicket.c("unit-sequencer");
 
 describe("UnitSequencer", function() {
   it("should advance on demand", function(done) {

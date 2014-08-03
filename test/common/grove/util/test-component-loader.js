@@ -2,8 +2,8 @@
 
 var _               = require("underscore"),
     assert          = require("assert"),
-    grove           = require("../../../../lib-node/grove"),
-    ComponentLoader = grove.c("component-loader");
+    thicket           = require("../../../../lib-node/thicket"),
+    ComponentLoader = thicket.c("component-loader");
 
 var RequireTracker = function() {
   this.initialize.apply(this, arguments);

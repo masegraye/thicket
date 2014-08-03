@@ -3,10 +3,10 @@
 var _       = require("underscore"),
     Promise = require("bluebird"),
     assert  = require("assert"),
-    grove   = require("../../../../lib-node/grove"),
-    App     = grove.c("app"),
-    Logger  = grove.c("logger"),
-    CLA     = grove.c("appenders/console-log");
+    thicket   = require("../../../../lib-node/thicket"),
+    App     = thicket.c("app"),
+    Logger  = thicket.c("logger"),
+    CLA     = thicket.c("appenders/console-log");
 
 describe("App", function() {
   it("should be defined", function() {

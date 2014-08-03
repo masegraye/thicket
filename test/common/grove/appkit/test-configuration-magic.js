@@ -1,7 +1,7 @@
 
 var assert             = require("assert"),
-    grove              = require("../../../../lib-node/grove"),
-    ConfigurationMagic = grove.c("configuration-magic");
+    thicket              = require("../../../../lib-node/thicket"),
+    ConfigurationMagic = thicket.c("configuration-magic");
 
 describe("ConfigurationMagic", function() {
   it("should be defined", function() {
