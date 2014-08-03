@@ -10,7 +10,8 @@
   "license": "MIT",
   "dependencies": {
     "bluebird": "= 2.2.2",
-    "underscore": "= 1.6.0"
+    "underscore": "= 1.6.0",
+    "nopt": "= 3.0.1"
   },
   "bugs": {
     "url": "https://github.com/maseb/thicket/issues"

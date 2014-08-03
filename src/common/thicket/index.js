@@ -1,7 +1,9 @@
 "use strict";
 
 var factory = function(
-  ComponentLoader
+  ComponentLoader,
+  webAliases,
+  nodeAliases
 ) {
   var c = new ComponentLoader(require);
 
@@ -26,10 +28,15 @@ var factory = function(
     "./logging/appenders/console-log-appender"      : ["appenders/console-log", "console-log-appender"]
   });
 
+  webAliases(c);
+  nodeAliases(c);
+
   return c;
 };
 
 module.exports = factory(
-  require("./util/component-loader")
+  require("./util/component-loader"),
+  require("./web"),
+  require("./node")
 );
 

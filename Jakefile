@@ -1,5 +1,7 @@
-var fs   = require("fs"),
-    spawn = require("child_process").spawn;
+var fs      = require("fs"),
+    spawn   = require("child_process").spawn,
+    Promise = require("bluebird"),
+    _       = require("underscore");
 
 
 desc("Exports build artifacts for web, node");
@@ -15,10 +17,17 @@ task("export-artifacts", function() {
   if (!fs.existsSync("./lib-node")) {
     fs.mkdirSync("./lib-node");
   }
-  var rsync = spawn("rsync", ["-avL", "src/common/thicket", "lib-node/"], {stdio: 'inherit'});
-  rsync.on("close", function() {
+  Promise.all(_.map(["common", "node"], function(pkg) {
+    return new Promise(function(resolve, reject) {
+      var rsync = spawn("rsync", ["-avL", "src/"+pkg+"/thicket", "lib-node/"], {stdio: 'inherit'});
+      rsync.on("close", function() {
+        resolve();
+      });
+    })
+  }))
+  .then(function() {
     complete();
-  })
+  });
 }, {async: true});
 
 task("run-tests", function() {

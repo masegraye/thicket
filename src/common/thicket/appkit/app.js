@@ -5,8 +5,8 @@ var mod = function(
   Promise,
   Logger,
   Options,
+  StateGuard,
   Runtime,
-
   ProcessKeepAlive
 ) {
   var Log = Logger.create("App");
@@ -18,6 +18,7 @@ var mod = function(
   _.extend(App.prototype, {
     initialize: function(opts) {
       opts = Options.fromObject(opts);
+      this._guard = new StateGuard(["starting", "started", "stopping", "stopped"]);
       this._config = opts.getOrError("configuration");
 
       // The default Runtime has sensible defaults.
@@ -32,16 +33,28 @@ var mod = function(
 
     start: Promise.method(function() {
       Log.debug("Starting App");
+      this._guard
+        .deny("starting")
+        .apply("starting");
+
       this._keepAlive.start();
       Log.debug("Calling App#up()");
-      return this.up();
+
+      return this.up()
+        .then(this._guard.applyAsyncFn("started"));
     }),
 
     stop: Promise.method(function() {
       Log.debug("Stopping App");
+      this._guard
+        .deny("stopping")
+        .apply("stopping");
+
       this._keepAlive.stop();
       Log.debug("Calling App#down()");
-      return this.down();
+
+      return this.down()
+        .then(this._guard.applyAsyncFn("stopped"));
     }),
 
     /**
@@ -63,6 +76,7 @@ module.exports = mod(
   require("bluebird"),
   require("../logging/logger"),
   require("../core/options"),
+  require("../core/state-guard"),
   require("../runtime"),
   require("./internal/process-keep-alive")
 );

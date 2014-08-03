@@ -1,7 +1,8 @@
 "use strict";
 
 var mod = function(
-  _
+  _,
+  ScopedConfigurationResolver
 ) {
 
   var ConfigurationMagic = function() {
@@ -12,11 +13,20 @@ var mod = function(
     initialize: function() {}
   });
 
-  _.extend(ConfigurationMagic, {});
+  _.extend(ConfigurationMagic, {
+    resolveConfig: function(scopes, configObjects) {
+      var r = new ScopedConfigurationResolver();
+      _.each(configObjects, function(c) {
+        r.add(c);
+      });
+      return r.resolve(scopes);
+    }
+  });
 
   return ConfigurationMagic;
 };
 
 module.exports = mod(
-  require("underscore")
+  require("underscore"),
+  require("./config/scoped-configuration-resolver")
 );
