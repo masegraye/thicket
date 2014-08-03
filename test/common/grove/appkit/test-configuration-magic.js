@@ -1,6 +1,6 @@
 
 var assert             = require("assert"),
-    thicket              = require("../../../../lib-node/thicket"),
+    thicket            = require("../../../../lib-node/thicket"),
     ConfigurationMagic = thicket.c("configuration-magic");
 
 describe("ConfigurationMagic", function() {

@@ -2,7 +2,7 @@
 
 var assert         = require("assert"),
     Promise        = require("bluebird"),
-    thicket          = require("../../../../../lib-node/thicket"),
+    thicket        = require("../../../../../lib-node/thicket"),
     LogicalClock   = thicket.c("logical-clock"),
     ClockSequencer = thicket.c("clock-sequencer");
 

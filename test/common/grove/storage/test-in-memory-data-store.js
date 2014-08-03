@@ -2,7 +2,7 @@
 
 var assert            = require("assert"),
     Promise           = require("bluebird"),
-    thicket             = require("../../../../lib-node/thicket"),
+    thicket           = require("../../../../lib-node/thicket"),
     InMemoryDataStore = thicket.c("in-memory-data-store");
 
 Promise.onPossiblyUnhandledRejection(function(e, promise) {

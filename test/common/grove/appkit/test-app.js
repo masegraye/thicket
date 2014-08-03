@@ -3,7 +3,7 @@
 var _       = require("underscore"),
     Promise = require("bluebird"),
     assert  = require("assert"),
-    thicket   = require("../../../../lib-node/thicket"),
+    thicket = require("../../../../lib-node/thicket"),
     App     = thicket.c("app"),
     Logger  = thicket.c("logger"),
     CLA     = thicket.c("appenders/console-log");

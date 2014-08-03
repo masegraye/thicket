@@ -1,7 +1,7 @@
 "use strict";
 
 var assert              = require("assert"),
-    thicket               = require("../../../../../lib-node/thicket"),
+    thicket             = require("../../../../../lib-node/thicket"),
     ScopedConfiguration = thicket.c("scoped-configuration");
 
 describe("ScopedConfiguration", function() {

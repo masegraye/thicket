@@ -2,7 +2,7 @@
 
 var assert        = require("assert"),
     Promise       = require("bluebird"),
-    thicket         = require("../../../../../lib-node/thicket"),
+    thicket       = require("../../../../../lib-node/thicket"),
     UnitSequencer = thicket.c("unit-sequencer");
 
 describe("UnitSequencer", function() {

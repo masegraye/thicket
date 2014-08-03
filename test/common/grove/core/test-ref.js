@@ -1,8 +1,8 @@
 "use strict";
 
-var assert = require("assert"),
-    thicket  = require("../../../../lib-node/thicket"),
-    Ref    = thicket.c("ref");
+var assert  = require("assert"),
+    thicket = require("../../../../lib-node/thicket"),
+    Ref     = thicket.c("ref");
 
 describe("Ref", function() {
   describe("Standard Ref", function() {

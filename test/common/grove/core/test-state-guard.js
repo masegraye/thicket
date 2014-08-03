@@ -1,7 +1,7 @@
 
 var assert     = require("assert"),
     Promise    = require("bluebird"),
-    thicket      = require("../../../../lib-node/thicket"),
+    thicket    = require("../../../../lib-node/thicket"),
     StateGuard = thicket.c("state-guard");
 
 describe("StateGuard", function() {

@@ -2,8 +2,8 @@
 
 var assert       = require("assert"),
     Promise      = require("bluebird"),
-    thicket        = require("../../../../../lib-node/thicket"),
-    SystemClock = thicket.c("system-clock");
+    thicket      = require("../../../../../lib-node/thicket"),
+    SystemClock  = thicket.c("system-clock");
 
 describe("SystemClock", function() {
   it("should be defined", function() {

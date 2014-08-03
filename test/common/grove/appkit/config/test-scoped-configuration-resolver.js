@@ -1,5 +1,5 @@
 var assert                      = require("assert"),
-    thicket                       = require("../../../../../lib-node/thicket"),
+    thicket                     = require("../../../../../lib-node/thicket"),
     ScopedConfigurationResolver = thicket.c("scoped-configuration-resolver");
 
 describe("ScopedConfigurationResolver", function() {

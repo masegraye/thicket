@@ -2,7 +2,7 @@
 "use strict";
 
 var assert             = require("assert"),
-    thicket              = require("../../../../../lib-node/thicket"),
+    thicket            = require("../../../../../lib-node/thicket"),
     Logger             = thicket.c("logger"),
     ConsoleLogAppender = thicket.c("appenders/console-log");
 

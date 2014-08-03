@@ -1,8 +1,8 @@
 "use strict";
 
-var assert = require("assert"),
-    thicket  = require("../../../../lib-node/thicket"),
-    Logger = thicket.c("logger");
+var assert  = require("assert"),
+    thicket = require("../../../../lib-node/thicket"),
+    Logger  = thicket.c("logger");
 
 describe("Logger", function() {
   it("should log to appender, and root logger's appender", function() {
