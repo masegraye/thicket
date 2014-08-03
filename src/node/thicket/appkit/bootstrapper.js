@@ -30,7 +30,7 @@ var mod = function(
             "configuration/default.json"
           )).split(",");
 
-      Log.debug("Scopes:", scopes, "Files:", configFiles);
+      Log.info("Configuration scopes:", scopes, "Configuration files:", configFiles);
       var readConfigs = _.map(configFiles, function(configFile) {
         return f
           .readFileAsync(configFile)
@@ -46,7 +46,7 @@ var mod = function(
           var config       = ConfigurationMagic.resolveConfig(scopes, configs),
               AppKlass     = this._appKlass;
 
-          Log.debug("Resolved configuration: ", JSON.stringify(config));
+          Log.info("Using resolved configuration: ", JSON.stringify(config));
 
           var app          = new AppKlass({configuration: config}),
               appContainer = new AppContainer({app: app});
