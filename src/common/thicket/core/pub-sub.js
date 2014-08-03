@@ -21,6 +21,7 @@ var mod = function(
       bucket.notify(args);
     },
     __pubSubBucket: function(eventName) {
+      this.__pubSubEvents = this.__pubSubEvents || {};
       this.__pubSubEvents[eventName] = this.__pubSubEvents[eventName] || new EventBucket(eventName);
       return this.__pubSubEvents[eventName];
     }
