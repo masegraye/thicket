@@ -12,6 +12,9 @@
     "bluebird": "= 2.2.2",
     "underscore": "= 1.6.0"
   },
+  "bugs": {
+    "url": "https://github.com/maseb/grovejs/issues"
+  },
   "scripts": {
     "test" : "mocha --reporter spec test/**/test-*.js"
   }
