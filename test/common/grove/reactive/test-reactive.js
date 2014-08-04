@@ -5,7 +5,7 @@ var _        = require("underscore"),
     Reactive = thicket.c("reactive");
 
 describe("Reactive", function() {
-  it("can map and filter from a promise", function(done) {
+  it("can map from a promise", function(done) {
     var mapCount = 0;
 
     var resolver,
@@ -25,5 +25,19 @@ describe("Reactive", function() {
     process.nextTick(function() {
       resolver("resolved_value");
     });
+  });
+
+  it("can filter values as well", function(done) {
+    Reactive([1, 2, 3, 4])
+      .map(function(val) {
+        return val + 1;
+      })
+      .filter(function(val) {
+        return val % 2 == 0;
+      })
+      .map(function(val) {
+        assert.ok(val % 2 == 0);
+        done()
+      });
   });
 });
