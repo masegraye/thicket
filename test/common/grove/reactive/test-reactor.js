@@ -2,17 +2,22 @@ var _        = require("underscore"),
     Promise  = require("bluebird"),
     assert   = require("assert"),
     thicket  = require("../../../../lib-node/thicket"),
-    Reactive = thicket.c("reactive");
+    Runtime  = thicket.c("runtime"),
+    Reactor  = thicket.c("reactor");
 
-describe("Reactive", function() {
+describe("Reactor", function() {
   it("can map from a promise", function(done) {
-    var mapCount = 0;
+    var mapCount = 0,
+        runtime = new Runtime(),
+        scheduler = runtime.scheduler(),
+        reactor = new Reactor({scheduler: scheduler});
 
     var resolver,
         p = new Promise(function(resolve, reject) {
           resolver = resolve;
         });
-    var c = Reactive.fromPromise(p).map(function(val) {
+
+    var c = reactor.fromPromise(p).map(function(val) {
       mapCount++;
       return val.toUpperCase();
     }).map(function(val) {
@@ -28,7 +33,10 @@ describe("Reactive", function() {
   });
 
   it("can filter values as well", function(done) {
-    Reactive([1, 2, 3, 4])
+    var reactor   = new Reactor(),
+        mapCount  = 0;
+
+    reactor.fromArray([1, 2, 3, 4])
       .map(function(val) {
         return val + 1;
       })
@@ -37,7 +45,10 @@ describe("Reactive", function() {
       })
       .map(function(val) {
         assert.ok(val % 2 == 0);
-        done()
+        mapCount++;
+        if (mapCount == 2) {
+          done();
+        }
       });
   });
 });

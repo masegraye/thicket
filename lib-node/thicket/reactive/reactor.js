@@ -2,17 +2,22 @@
 
 var mod = function(
   _,
-  ReactiveNode
+  Options,
+  Ref,
+  ReactiveNode,
+  DefaultScheduler
 ) {
 
-  var Reactive = function() {
+  var Reactor = function() {
     this.initialize.apply(this, arguments);
   };
 
-  _.extend(Reactive, {
+  _.extend(Reactor.prototype, {
     initialize: function(opts) {
       opts = Options.fromObject(opts);
-      this._scheduler = opts.getOrError("scheduler");
+      this._scheduler = opts.getOrElseFn("scheduler", function() {
+        return Ref(new DefaultScheduler());
+      });
     },
     fromPromise: function(promise) {
       var node = new ReactiveNode();
@@ -36,10 +41,13 @@ var mod = function(
     }
   });
 
-  return Reactive;
+  return Reactor;
 };
 
 module.exports = mod(
   require("underscore"),
-  require("./reactive-node")
+  require("../core/options"),
+  require("../core/ref"),
+  require("./reactive-node"),
+  require("../scheduler")
 );

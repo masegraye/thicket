@@ -27,7 +27,7 @@ var factory = function(
     "./runtime"                                     : "runtime",
     "./logging/logger"                              : "logger",
     "./logging/appenders/console-log-appender"      : ["appenders/console-log", "console-log-appender"],
-    "./reactive"                                    : "reactive"
+    "./reactive/reactor"                            : "reactor"
   });
 
   webAliases(c);
