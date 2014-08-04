@@ -1,7 +1,7 @@
 "use strict";
 
 var mod = function(
-  _
+  _,
   PubSub,
   Transform
 ) {
@@ -10,11 +10,11 @@ var mod = function(
     this.initialize.apply(this, arguments);
   };
 
-  _.extend(TransformChain.prototype, Events, {
+  _.extend(TransformChain.prototype, PubSub, {
     initialize: function() {
       this._head = this._tail = new Transform();
 
-      _.bindAll(this, "_onTailElement");
+      _.bindAll(this, "_onTailElement", "apply");
 
       this._tail.on("element", this._onTailElement);
     },
@@ -22,10 +22,13 @@ var mod = function(
       this._head.apply(element);
     },
     addTransform: function(t) {
+      var tail = this._tail;
+
       this._tail.off("element", this._onTailElement);
-      this._tail.setNext(t);
+      this._tail.on("element", t.apply, t);
       this._tail = t;
-      t.on("element", this._onTailElement);
+      this._tail.on("element", this._onTailElement);
+
     },
     _onTailElement: function(element) {
       this.notify("element", element);

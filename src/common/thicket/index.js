@@ -26,7 +26,8 @@ var factory = function(
     "./appkit/app"                                  : "app",
     "./runtime"                                     : "runtime",
     "./logging/logger"                              : "logger",
-    "./logging/appenders/console-log-appender"      : ["appenders/console-log", "console-log-appender"]
+    "./logging/appenders/console-log-appender"      : ["appenders/console-log", "console-log-appender"],
+    "./reactive"                                    : "reactive"
   });
 
   webAliases(c);

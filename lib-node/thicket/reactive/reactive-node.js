@@ -4,15 +4,16 @@ var mod = function(
   _,
   Options,
   PubSub,
+  TransformChain,
   MapTransform,
   FilterTransform
 ) {
 
-  var Reactive = function() {
+  var ReactiveNode = function() {
     this.initialize.apply(this, arguments);
   };
 
-  _.extend(Reactive.prototype, {
+  _.extend(ReactiveNode.prototype, {
     initialize: function(opts) {
       opts = Options.fromObject(opts);
       this._chain = new TransformChain();
@@ -35,32 +36,39 @@ var mod = function(
       this._subscriptions = [];
     },
     map: function(fn) {
-      return new Reactive({
+      return new ReactiveNode({
         parent: this,
         transforms: [new MapTransform(fn)]
       });
     },
     filter: function(fn) {
-      return new Reactive({
+      return new ReactiveNode({
         parent: this,
         transforms: [new FilterTransform(fn)]
       });
     },
-    _onParentElement: function(element) {
+    _apply: function(element) {
       this._chain.apply(element);
     },
+    _applyError: function(err) {
+      // TODO: Means of being notified of errors, plz
+    },
+    _onParentElement: function(element) {
+      this._apply(element);
+    },
     _notifySubscribers: function(element) {
-      console.log("Got element for subscribers", element);
+      this._pubsub.notify("element", element);
     }
   });
 
-  return Reactive;
+  return ReactiveNode;
 };
 
 module.exports = mod(
   require("underscore"),
   require("../core/options"),
   require("../core/pub-sub"),
+  require("./transform-chain"),
   require("./map-transform"),
   require("./filter-transform")
 );

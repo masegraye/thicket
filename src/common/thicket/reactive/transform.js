@@ -14,10 +14,6 @@ var mod = function(
     apply: function(element) {
       // Default is identity map
       this.notify("element", element);
-    },
-    setNext: function(next) {
-      this._next = next;
-      this.on("element", next.apply.bind(next));
     }
   });
 

@@ -57,7 +57,7 @@ var mod = function(
         sub.dispose();
       });
 
-      this._subscriptions = _.without(this._subscriptions, subs);
+      this._subscriptions = _.difference(this._subscriptions, subs);
     },
     notify: function(args) {
       _.invoke(this._subscriptions, "notify", args);
@@ -87,6 +87,8 @@ var mod = function(
       // just in case...
       if (this._handler) {
         this._handler.apply(this._context, args);
+      } else {
+        console.log("WTF");
       }
     },
     dispose: function() {
