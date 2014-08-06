@@ -1,6 +1,6 @@
 {
   "name": "thicket",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Foundational library for building robust, testable, cohesive JavaScript applications.",
   "main": "lib-node/thicket/index.js",
   "scripts": {
