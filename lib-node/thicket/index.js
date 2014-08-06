@@ -19,6 +19,7 @@ var factory = function(
     "./core/sequencer/delegating-composite-sequencer"  : "delegating-composite-sequencer",
     "./core/sequencer/delegating-forwarding-sequencer" : "delegating-forwarding-sequencer",
     "./collection/doubly-linked-list"                  : "doubly-linked-list",
+    "./collection/object-hash-map"                     : ["hash-map", "object-hash-map"],
     "./collection/lru-hash-map"                        : "lru-hash-map",
     "./storage/caching-data-store"                     : "caching-data-store",
     "./storage/in-memory-data-store"                   : "in-memory-data-store",
