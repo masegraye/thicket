@@ -16,6 +16,7 @@ var factory = function(
     "./core/pub-sub"                                : "pub-sub",
     "./core/sequencer/unit-sequencer"               : ["unit-sequencer", "sequencer"],
     "./core/sequencer/clock-sequencer"              : "clock-sequencer",
+    "./collection/doubly-linked-list"               : "doubly-linked-list",
     "./storage/caching-data-store"                  : "caching-data-store",
     "./storage/in-memory-data-store"                : "in-memory-data-store",
     "./time/clock/logical-clock"                    : "logical-clock",
