@@ -114,6 +114,7 @@ var mod = function(
       }
 
       this._size++;
+      return newNode;
     },
 
     _linkBack: function(value) {
@@ -129,6 +130,7 @@ var mod = function(
       }
 
       this._size++;
+      return newNode;
     },
 
     _linkBefore: function(value, node) {
@@ -142,6 +144,7 @@ var mod = function(
         pred.setNext(newNode);
       }
       this._size++
+      return newNode;
     },
 
     _unlinkFront: function(node) {
