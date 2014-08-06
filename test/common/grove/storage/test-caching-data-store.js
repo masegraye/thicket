@@ -5,7 +5,9 @@ var assert            = require("assert"),
     thicket           = require("../../../../lib-node/thicket"),
     CachingDataStore  = thicket.c("caching-data-store"),
     LogicalClock      = thicket.c("logical-clock"),
-    ClockSequencer    = thicket.c("clock-sequencer");
+    ClockSequencer    = thicket.c("clock-sequencer"),
+    InMemoryDataStore = thicket.c("in-memory-data-store"),
+    LRUHashMap        = thicket.c("lru-hash-map");
 
 Promise.onPossiblyUnhandledRejection(function(e, promise) {
     throw e;
@@ -138,6 +140,67 @@ describe("CachingDataStore", function() {
         done();
       })
 
+  });
+
+  it("should interop with an LRUHashMap-backed InMemoryDataStore", function(done) {
+    var map      = new LRUHashMap({
+      capacity: 5
+    }),
+    backingStore = new InMemoryDataStore({
+      backingHashMap: map
+    }),
+    cachingStore = new CachingDataStore({
+      backingStore: backingStore,
+      ttl: 1
+    }),
+    sequencer    = cachingStore.sequencer(),
+    caughtCount  = 0;
+    // Now... we should have max 5, OR on expiry
+    Promise.attempt(function() {
+      // Order is important here, so
+      // we'll chain these
+      return cachingStore.put("one",   1)
+        .then(function() {
+          return cachingStore.put("two",   2);
+        })
+        .then(function() {
+          return cachingStore.put("three", 3);
+        })
+        .then(function() {
+          return cachingStore.put("four",  4);
+        })
+        .then(function() {
+          return cachingStore.put("five",  5);
+        });
+    })
+    .then(function() {
+      return cachingStore.exists("five");
+    })
+    .then(function(exists) {
+      assert.ok(exists);
+      return cachingStore.put("six", 6)
+        .then(function() {
+          return cachingStore.exists("one");
+        });
+    })
+    .then(function(exists) {
+      assert.ok(!exists);
+      return sequencer.advance()
+        .then(function() {
+          return cachingStore.exists("six")
+        });
+    })
+    .then(function(exists) {
+      assert.ok(!exists);
+    })
+    .caught(function(err) {
+      assert.equal(err && err.message, "");
+      caughtCount++;
+    })
+    .lastly(function() {
+      assert.equal(caughtCount, 0);
+      done();
+    })
   });
 
 });

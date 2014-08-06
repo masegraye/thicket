@@ -167,6 +167,10 @@ var mod = function(
       // backing store. We need to perform eviction, as a subsequent call
       // to get would do the same. If the `exists` check says it exists,
       // bet it doesn't when we `get`, then `exists` is a worthless operation.
+      //
+      // Note that if you're using a CachingDataStore backed by an InMemoryDataStore
+      // backed by an LRUHashMap, this will cause the entry to be "touched", whereas
+      // a normal "exists" check would not.
       return Promise
         .bind(this)
         .then(function() {
