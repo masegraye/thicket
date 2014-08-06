@@ -1,16 +1,18 @@
 
-var assert                 = require("assert"),
-    Promise                = require("bluebird"),
-    thicket                = require("../../../../../lib-node/thicket"),
-    CompositeUnitSequencer = thicket.c("composite-unit-sequencer"),
-    UnitSequencer          = thicket.c("unit-sequencer");
+var assert                       = require("assert"),
+    Promise                      = require("bluebird"),
+    thicket                      = require("../../../../../lib-node/thicket"),
+    DelegatingCompositeSequencer = thicket.c("delegating-composite-sequencer"),
+    UnitSequencer                = thicket.c("unit-sequencer");
 
-describe("CompositeUnitSequencer", function() {
+describe("DelegatingCompositeSequencer", function() {
   it("should have a value composed of its underlying sequencers, and itself", function(done) {
     var caughtCount = 0,
         seq1        = new UnitSequencer(),
         seq2        = new UnitSequencer(),
-        composite   = new CompositeUnitSequencer({
+        delegate    = new UnitSequencer(),
+        composite   = new DelegatingCompositeSequencer({
+          delegate: delegate,
           sequencers: [seq1, seq2]
         });
 

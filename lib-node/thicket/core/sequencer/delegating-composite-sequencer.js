@@ -3,8 +3,7 @@
 var mod = function(
   _,
   Promise,
-  Options,
-  UnitSequencer
+  Options
 ) {
 
   /**
@@ -16,7 +15,7 @@ var mod = function(
    * from Source(A), tracked by Sequencer(A), and CachingDataStore(B) storing
    * data from Source(B), tracked by Sequencer(B). Meanwhile, you may have
    * CachingDataStore(C), storing data from Source(A + B), and tracked by
-   * Sequencer(C) = Sequencer(A + B) - a CompositeUnitSequencer.
+   * Sequencer(C) = Sequencer(A + B) - a DelegatingCompositeSequencer.
    *
    * Thus, if Sequencer(A) is advanced, it may invalidate CachingDataStore(A) or
    * CachingDataStore(C) or both.
@@ -25,21 +24,30 @@ var mod = function(
    *
    * If you'd like the above functionality, but with Sequencer(A) and
    * Sequencer(B) as ClockSequencers, and Sequencer(C) merely tracking
-   * modification, you'd need to use a DelegatingSequencer for A and B.
+   * modification, you'd need to use a DelegatingForwardingSequencer for A and B,
+   * forwarding them to UnitSequencer(C).
+   *
+   * DelegatingCompositeSequencer and DelegatingForwardingSequencer are effectivly
+   * opposites of each other. DelegatingCompositeSequencer composes the `value`
+   * of multiple underlying sequencers (pull), and DelegatingForwardingSequencer
+   * forwards the `advance` call to multiple targets (push).
    */
-  var CompositeUnitSequencer = function() {
+  var DelegatingCompositeSequencer = function() {
     this.initialize.apply(this, arguments);
   };
 
-  _.extend(CompositeUnitSequencer.prototype, UnitSequencer.prototype, {
+  _.extend(DelegatingCompositeSequencer.prototype, {
     initialize: function(opts) {
-      UnitSequencer.prototype.initialize.apply(this, arguments);
-
       opts = Options.fromObject(opts);
+      this._delegateSequencer = opts.getOrError("delegate");
       this._sequencers = _.clone(opts.getOrElse("sequencers", []));
     },
     addSequencer: function(seq) {
       this._sequencers.push(seq);
+    },
+    advance: function() {
+      var s = this._delegateSequencer;
+      return s.advance.apply(s, arguments);
     },
     value: function() {
       return _
@@ -48,16 +56,15 @@ var mod = function(
         .reduce(function(sum, n) {
           return sum + n;
         }, 0)
-        .value() + this._sequence;
+        .value() + this._delegateSequencer.value();
     }
   });
 
-  return CompositeUnitSequencer;
+  return DelegatingCompositeSequencer;
 };
 
 module.exports = mod(
   require("underscore"),
   require("bluebird"),
-  require("../options"),
-  require("./unit-sequencer")
+  require("../options")
 );
