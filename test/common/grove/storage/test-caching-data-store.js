@@ -1,13 +1,15 @@
 "use strict";
 
-var assert            = require("assert"),
-    Promise           = require("bluebird"),
-    thicket           = require("../../../../lib-node/thicket"),
-    CachingDataStore  = thicket.c("caching-data-store"),
-    LogicalClock      = thicket.c("logical-clock"),
-    ClockSequencer    = thicket.c("clock-sequencer"),
-    InMemoryDataStore = thicket.c("in-memory-data-store"),
-    LRUHashMap        = thicket.c("lru-hash-map");
+var assert                        = require("assert"),
+    Promise                       = require("bluebird"),
+    thicket                       = require("../../../../lib-node/thicket"),
+    CachingDataStore              = thicket.c("caching-data-store"),
+    LogicalClock                  = thicket.c("logical-clock"),
+    ClockSequencer                = thicket.c("clock-sequencer"),
+    UnitSequencer                 = thicket.c("unit-sequencer"),
+    DelegatingForwardingSequencer = thicket.c("delegating-forwarding-sequencer"),
+    InMemoryDataStore             = thicket.c("in-memory-data-store"),
+    LRUHashMap                    = thicket.c("lru-hash-map");
 
 Promise.onPossiblyUnhandledRejection(function(e, promise) {
     throw e;
@@ -201,6 +203,91 @@ describe("CachingDataStore", function() {
       assert.equal(caughtCount, 0);
       done();
     })
+  });
+
+  describe("Composed CachingDataStore with DelegatingForwardingSequencer", function(done) {
+    var caughtCount = 0,
+        clock   = new LogicalClock(),
+
+        a_del   = new ClockSequencer({ clock: clock }),
+        b_del   = new ClockSequencer({ clock: clock }),
+
+        c_seq   = new UnitSequencer(),
+        a_seq   = new DelegatingForwardingSequencer({
+          delegate: a_del,
+          targets: [c_seq]
+        }),
+        b_seq   = new DelegatingForwardingSequencer({
+          delegate: b_del,
+          targets: [c_seq]
+        }),
+        a_cache = new CachingDataStore({
+          sequencer: a_seq,
+          ttl: 5000
+        }),
+        b_cache = new CachingDataStore({
+          sequencer: b_seq,
+          ttl: 10000
+        }),
+        c_cache = new CachingDataStore({
+          sequencer: c_seq,
+          ttl: 1
+        });
+
+        // Okay... so we now have:
+        // CachingDataStore(A) tied to Sequencer(A),
+        // CachingDataStore(B) tied to Sequencer(B),
+        // and CachingDataStore(C) tied to Sequencer(A|B)
+
+        // This means that updating the sequencers for
+        // either A or B will cause C to invalidate (even if
+        // the data stored in Cache(A) or Cache(B) was not invalidated)
+
+        // The idea is that you'd then wire Cache(C) to consult (A) and (B)
+        // to reconstruct its value. In most cases, this will be a cache it.
+
+        Promise.attempt(function() {
+          return a_cache.put("a-1", 1)
+            .then(function() {
+              return b_cache.put("b-1", 1)
+            })
+            .then(function() {
+              return Promise.all([
+                a_cache.get("a-1"),
+                b_cache.get("b-1")
+              ])
+            })
+            .then(function(result) {
+              return c_cache.put("c-1", _.reduct(results, function(s,n) {
+                return s+n
+              }, 0));
+            })
+            .then(function() {
+              return c_cache.get("c-1");
+            });
+        })
+        .then(function(result) {
+          assert.equal(result, 2);
+          return a_seq.advance()
+            .then(function() {
+              a_cache.get("a-1")
+            });
+        })
+        .then(function(a_val) {
+          assert.equal(a_val, 1);
+          return c_cache.get("c-1")
+        })
+        .then(function(c_val) {
+          assert.equal(c_val, undefined);
+        })
+        .caught(function(err) {
+          assert.equal(err && err.message, "");
+          caughtCount++;
+        })
+        .lastly(function() {
+          assert.equal(caughtCount, 0);
+          done()
+        });
   });
 
 });
