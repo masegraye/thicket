@@ -3,6 +3,7 @@
 var mod = function(
   _,
   Options,
+  ObjectHashMap,
   DoublyLinkedList
 ) {
 
@@ -16,11 +17,10 @@ var mod = function(
       this._capacity = opts.getOrError("capacity");
       this._keyAccessList = new DoublyLinkedList();
       // TODO: Really need a proper HashMap at some point...
-      this._store = {};
-      this._size = 0;
+      this._store = new ObjectHashMap();
     },
     get: function(key) {
-      var entry = this._store[key];
+      var entry = this._store.get(key);
       if (!entry) {
         return;
       }
@@ -40,18 +40,17 @@ var mod = function(
     },
 
     put: function(key, val) {
-      var entry = this._store[key],
+      var entry = this._store.get(key),
           node;
       if (!entry) {
         // If no entry, make a new entry
         if (this._keyAccessList.size() >= this._capacity) {
           // Have to make room for it
           var evictedKey = this._keyAccessList.removeBack(),
-              evictedEntry = this._store[evictedKey];
+              evictedEntry = this._store.get(evictedKey);
 
           evictedEntry.dispose();
-          delete this._store[evictedKey];
-          this._size--;
+          this._store.remove(evictedKey);
         }
 
         node = this._keyAccessList._linkFront(key);
@@ -60,8 +59,7 @@ var mod = function(
           value: val,
           node: node
         });
-        this._store[key] = entry;
-        this._size++;
+        this._store.put(key, entry);
       } else {
         // "Touch" the entry, set new value
         node = entry.node();
@@ -74,7 +72,7 @@ var mod = function(
     },
 
     remove: function(key) {
-      var entry = this._store[key],
+      var entry = this._store.get(key),
           value,
           node;
       if (entry) {
@@ -82,25 +80,22 @@ var mod = function(
         node = entry.node();
         this._keyAccessList._unlink(node);
         entry.dispose();
-        this._size--;
-        delete this._store[key];
+        this._store.remove(key);
         return value;
       }
     },
 
     exists: function(key) {
-      return this._store.hasOwnProperty(key) && this._store[key];
+      return this._store.exists(key);
     },
 
     size: function() {
-      return this._size;
+      return this._store.size();
     },
 
     clear: function() {
-      _.invoke(this._store, "dispose");
-      this._store = {};
+      this._store.clear();
       this._keyAccessList.clear();
-      this._size = 0;
     }
   });
 
@@ -145,5 +140,6 @@ var mod = function(
 module.exports = mod(
   require("underscore"),
   require("../core/options"),
+  require("./object-hash-map"),
   require("./doubly-linked-list")
 );
