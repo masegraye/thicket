@@ -23,6 +23,7 @@ var factory = function(
     "./collection/lru-hash-map"                        : "lru-hash-map",
     "./storage/caching-data-store"                     : "caching-data-store",
     "./storage/in-memory-data-store"                   : "in-memory-data-store",
+    "./storage/lru-data-store"                         : "lru-data-store",
     "./time/clock/logical-clock"                       : "logical-clock",
     "./time/clock/system-clock"                        : "system-clock",
     "./appkit/configuration-magic"                     : "configuration-magic",
