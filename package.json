@@ -1,11 +1,8 @@
 {
   "name": "thicket",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Foundational library for building robust, testable, cohesive JavaScript applications.",
   "main": "lib-node/thicket/index.js",
-  "scripts": {
-    "test": "npm run-script test"
-  },
   "author": "Mason Browne <mason.browne@gmail.com>",
   "license": "MIT",
   "dependencies": {
