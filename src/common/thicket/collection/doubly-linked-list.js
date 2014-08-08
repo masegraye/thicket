@@ -1,3 +1,4 @@
+/*global require: false, module: false */
 "use strict";
 
 var mod = function(
@@ -10,9 +11,7 @@ var mod = function(
   };
 
   _.extend(DoublyLinkedList.prototype, {
-    initialize: function(opts) {
-      opts = Options.fromObject(opts);
-
+    initialize: function() {
       this._front = null;
       this._back = null;
       this._size = 0;
@@ -143,7 +142,7 @@ var mod = function(
       } else {
         pred.setNext(newNode);
       }
-      this._size++
+      this._size++;
       return newNode;
     },
 
@@ -200,7 +199,7 @@ var mod = function(
     },
 
     _walkToIdx: function(idx) {
-      var node, value, current;
+      var node, current;
       if (idx < this._size / 2) {
         node = this._front;
         current = 0;

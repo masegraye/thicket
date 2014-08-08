@@ -1,3 +1,4 @@
+/*global require: false, module: false */
 "use strict";
 
 var mod = function(
@@ -11,7 +12,7 @@ var mod = function(
    */
   var LogicalClock = function() {
     this.initialize.apply(this, arguments);
-  }
+  };
 
   _.extend(LogicalClock.prototype, {
     initialize: function(opts) {

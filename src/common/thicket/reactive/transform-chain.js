@@ -1,3 +1,4 @@
+/*global require: false, module: false */
 "use strict";
 
 var mod = function(
@@ -22,8 +23,6 @@ var mod = function(
       this._head.apply(element);
     },
     addTransform: function(t) {
-      var tail = this._tail;
-
       this._tail.off("element", this._onTailElement);
       this._tail.on("element", t.apply, t);
       this._tail = t;

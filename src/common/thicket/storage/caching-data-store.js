@@ -1,3 +1,4 @@
+/*global require: false, module: false */
 "use strict";
 
 var mod = function(
@@ -67,7 +68,7 @@ var mod = function(
      *
      * @param key {string} (required)
      * @async
-     * @returns {Promise<dynamic>} requested value
+     * @returns {Promise<Object>} requested value
      */
     get: Promise.method(function(key) {
       return Promise

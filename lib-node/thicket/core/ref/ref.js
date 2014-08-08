@@ -1,3 +1,4 @@
+/*global require: false, module: false */
 "use strict";
 
 var mod = function(
@@ -10,7 +11,7 @@ var mod = function(
    */
   var Ref = function() {
     this.initialize.apply(this, arguments);
-  }
+  };
 
   _.extend(Ref.prototype, {
     initialize: function(val) {

@@ -1,3 +1,4 @@
+/*global require: false, module: false */
 "use strict";
 
 var mod = function(
@@ -7,7 +8,7 @@ var mod = function(
 
   var ConfigurationMagic = function() {
     this.initialize.apply(this, arguments);
-  }
+  };
 
   _.extend(ConfigurationMagic.prototype, {
     initialize: function() {}

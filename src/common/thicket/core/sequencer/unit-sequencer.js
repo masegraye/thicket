@@ -1,3 +1,4 @@
+/*global require: false, module: false */
 "use strict";
 
 var mod = function(
@@ -8,7 +9,7 @@ var mod = function(
 
   var UnitSequencer = function() {
     this.initialize.apply(this, arguments);
-  }
+  };
 
   _.extend(UnitSequencer.prototype, {
     initialize: function(opts) {

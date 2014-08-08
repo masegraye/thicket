@@ -1,3 +1,4 @@
+/*global require: false, module: false */
 "use strict";
 
 var mod = function(
@@ -13,7 +14,7 @@ var mod = function(
    */
   var InMemoryDataStore = function() {
     this.initialize.apply(this, arguments);
-  }
+  };
 
   _.extend(InMemoryDataStore.prototype, {
     initialize: function(opts) {

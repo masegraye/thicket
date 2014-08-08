@@ -1,3 +1,4 @@
+/*global require: false, module: false */
 "use strict";
 
 var factory = function(
@@ -16,9 +17,8 @@ var factory = function(
 
     alias: function(opts) {
       opts = Options.fromObject(opts);
-      var moduleName = opts.getOrError("module"),
-          aliasName  = opts.getOrError("as");
-      this._aliases[aliasName] = moduleName;
+      var aliasName  = opts.getOrError("as");
+      this._aliases[aliasName] = opts.getOrError("module");
     },
 
     bulkAlias: function(aliases) {

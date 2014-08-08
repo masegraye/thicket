@@ -1,3 +1,4 @@
+/*global require: false, module: false */
 "use strict";
 
 var mod = function(
@@ -9,7 +10,7 @@ var mod = function(
 
   var DefaultRuntime = function() {
     this.initialize.apply(this, arguments);
-  }
+  };
 
   _.extend(DefaultRuntime.prototype, {
     initialize: function(opts) {
