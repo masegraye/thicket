@@ -1,3 +1,4 @@
+/*global require: false, module: false, process: false */
 "use strict";
 
 var mod = function(
@@ -28,6 +29,17 @@ var mod = function(
         .then(function() {
           return this._app.start();
         });
+    }),
+
+    stop: Promise.method(function(reason) {
+      return this._app.stop().then(function() {
+        if (reason) {
+          Log.error("Stopping due to reason:", reason);
+          process.exit(1);
+        } else {
+          process.exit(0)
+        }
+      });
     }),
 
     _registerSigInt: Promise.method(function() {

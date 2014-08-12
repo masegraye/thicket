@@ -20,7 +20,8 @@ var mod = function(
     initialize: function(opts) {
       opts = Options.fromObject(opts);
       this._guard = new StateGuard(["starting", "started", "stopping", "stopped"]);
-      this._config = opts.getOrError("configuration");
+      this._rawConfig = opts.getOrError("configuration");
+      this._config = Options.fromObject(this._rawConfig);
 
       // The default Runtime has sensible defaults.
       this._runtime = opts.getOrElseFn("runtime", function() {
