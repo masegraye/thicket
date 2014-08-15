@@ -60,6 +60,15 @@ var mod = function(
     }),
 
     /**
+     * Returns the requested configuration value, or throws an error.
+     * @param key the configuration key request from the Configuration.
+     * @returns {Object}
+     */
+    config: function(key) {
+      return this._config.getOrError(key);
+    },
+
+    /**
      * TODO: Doc. Subclass should override.
      */
     up: Promise.method(function() {}),
