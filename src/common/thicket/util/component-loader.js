@@ -13,6 +13,12 @@ var factory = function(
     initialize: function(requireFun) {
       this._requireFun = requireFun;
       this._aliases = {};
+      this._pathTransform = function(id) { return id;};
+    },
+
+    setPathTransform: function(pathTransform) {
+      this._pathTransform = pathTransform;
+      return this;
     },
 
     alias: function(opts) {
@@ -37,7 +43,7 @@ var factory = function(
       if (!mod) {
         throw new Error("Invalid alias provided (no such module): `"+alias+"'");
       }
-      return this._requireFun(mod);
+      return this._requireFun(this._pathTransform(mod));
     },
 
     c: function(alias) {

@@ -73,5 +73,5 @@ module.exports = mod(
   require("../core/options"),
   require("../logging/logger"),
   require("./configuration-magic"),
-  require("./app-container")
+  require("./node-app-container")
 );

@@ -26,7 +26,7 @@ var factory = function(
     }
   });
 
-  return Lang();
+  return Lang;
 };
 
 module.exports = factory(

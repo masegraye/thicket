@@ -43,9 +43,10 @@ var factory = function(
   return c;
 };
 
-module.exports = factory(
+var g = (typeof window === "undefined" ? {} : window);
+
+g.thicket = module.exports = factory(
   require("./util/component-loader"),
   require("./web"),
   require("./node")
 );
-

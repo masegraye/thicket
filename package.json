@@ -1,20 +1,25 @@
 {
   "name": "thicket",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "Foundational library for building robust, testable, cohesive JavaScript applications.",
   "main": "lib-node/thicket/index.js",
-  "author": "Mason Browne <mason.browne@gmail.com>",
+  "author": "Mason Browne <m.public@academy15.com>",
   "license": "MIT",
   "dependencies": {
     "bluebird": "= 2.2.2",
     "underscore": "= 1.6.0",
     "nopt": "= 3.0.1"
   },
+  "devDependencies": {
+    "grunt": "0.4.5",
+    "grunt-browserify2": "0.1.8",
+    "grunt-contrib-clean": "^0.6.0"
+  },
   "bugs": {
     "url": "https://github.com/maseb/thicket/issues"
   },
   "scripts": {
-    "test" : "mocha --reporter spec test/**/test-*.js"
+    "test": "mocha --reporter spec test/**/test-*.js"
   },
   "repository": {
     "type": "git",
