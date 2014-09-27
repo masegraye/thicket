@@ -31,6 +31,22 @@ var mod = function(
       this._keepAlive = new ProcessKeepAlive({
         scheduler: this._runtime.scheduler()
       });
+
+      var up   = opts.getOrElse("up"),
+          down = opts.getOrElse("down");
+
+      if (up) {
+        this.up = Promise.method(_.bind(function() {
+          return up.call(this, this._config);
+        }, this));
+      }
+
+      if (down) {
+        this.down = Promise.method(_.bind(function() {
+          return down.call(this, this._config);
+        }, this));
+      }
+
     },
 
     start: Promise.method(function() {

@@ -8,8 +8,9 @@ var mod = function(
   Options,
   Logger,
   ConfigurationMagic,
-  AppContainer
-) {
+  AppContainer,
+  App
+  ) {
   var f   = Promise.promisifyAll(fs),
       Log = Logger.create("Bootstrapper");
 
@@ -20,9 +21,13 @@ var mod = function(
   _.extend(Bootstrapper.prototype, {
     initialize: function(opts) {
       opts = Options.fromObject(opts);
-      this._appKlass = opts.getOrError("applicationConstructor");
+      this._appKlass = opts.getOrElse("applicationConstructor");
+      if (!this._appKlass) {
+        this._up = opts.getOrError("up");
+        this._down = opts.getOrError("down");
+      }
     },
-    bootstrap: Promise.method(function() {
+    bootstrap: Promise.method(function(cb) {
       var args        = Options.fromObject(this._getArgs()),
           scopes      = (args.getOrElse("scopes", "")).split(","),
           configFiles = (args.getOrElse(
@@ -48,11 +53,11 @@ var mod = function(
 
           Log.info("Using resolved configuration: ", JSON.stringify(config));
 
-          var app          = new AppKlass({configuration: config}),
+          var app          = AppKlass ? new AppKlass({configuration: config}) : new App({configuration: config, up: this._up, down: this._down}),
               appContainer = new AppContainer({app: app});
 
           return appContainer;
-        });
+        }).nodeify(cb);
     }),
     _getArgs: function() {
       return nopt({
@@ -73,5 +78,6 @@ module.exports = mod(
   require("../core/options"),
   require("../logging/logger"),
   require("./configuration-magic"),
-  require("./node-app-container")
+  require("./node-app-container"),
+  require("./app")
 );
