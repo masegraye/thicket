@@ -1,40 +1,150 @@
 /*global require: false, module: false */
 "use strict";
 
-var factory = function(
-  ComponentLoader,
+var mod = function(
+  ComponentRegistry,
   webAliases,
   nodeAliases
 ) {
-  var c = new ComponentLoader(require);
+  var c = new ComponentRegistry();
 
-  c.bulkAlias({
-    "./util/component-loader"                          : "component-loader",
-    "./core/options"                                   : "options",
-    "./core/lang"                                      : "lang",
-    "./core/ref"                                       : "ref",
-    "./core/state-guard"                               : "state-guard",
-    "./core/pub-sub"                                   : "pub-sub",
-    "./core/sequencer/unit-sequencer"                  : ["unit-sequencer", "sequencer"],
-    "./core/sequencer/clock-sequencer"                 : "clock-sequencer",
-    "./core/sequencer/delegating-composite-sequencer"  : "delegating-composite-sequencer",
-    "./core/sequencer/delegating-forwarding-sequencer" : "delegating-forwarding-sequencer",
-    "./collection/doubly-linked-list"                  : "doubly-linked-list",
-    "./collection/object-hash-map"                     : ["hash-map", "object-hash-map"],
-    "./collection/lru-hash-map"                        : "lru-hash-map",
-    "./storage/caching-data-store"                     : "caching-data-store",
-    "./storage/in-memory-data-store"                   : "in-memory-data-store",
-    "./storage/lru-data-store"                         : "lru-data-store",
-    "./time/clock/logical-clock"                       : "logical-clock",
-    "./time/clock/system-clock"                        : "system-clock",
-    "./appkit/configuration-magic"                     : "configuration-magic",
-    "./appkit/config/scoped-configuration-resolver"    : "scoped-configuration-resolver",
-    "./appkit/config/scoped-configuration"             : ["scoped-configuration", "config/scoped-configuration"],
-    "./appkit/app"                                     : "app",
-    "./runtime"                                        : "runtime",
-    "./logging/logger"                                 : "logger",
-    "./logging/appenders/console-log-appender"         : ["appenders/console-log", "console-log-appender"],
-    "./reactive/reactor"                               : "reactor"
+
+  c.registerMany([
+    {
+      module: require("./util/component-loader"),
+      as: "component-loader"
+    },
+
+    {
+      module: require("./core/options"),
+      as: "options"
+    },
+
+    {
+      module: require("./core/lang"),
+      as: "lang"
+    },
+
+    {
+      module: require("./core/ref"),
+      as: "ref"
+    },
+
+    {
+      module: require("./core/state-guard"),
+      as: "state-guard"
+    },
+
+
+    {
+      module: require("./core/pub-sub"),
+      as: "pub-sub"
+    },
+
+    {
+      module: require("./core/sequencer/unit-sequencer"),
+      as: ["unit-sequencer", "sequencer"]
+    },
+
+
+    {
+      module: require("./core/sequencer/clock-sequencer"),
+      as: "clock-sequencer"
+    },
+
+    {
+      module: require("./core/sequencer/delegating-composite-sequencer"),
+      as: "delegating-composite-sequencer"
+    },
+
+    {
+      module: require("./core/sequencer/delegating-forwarding-sequencer"),
+      as: "delegating-forwarding-sequencer"
+    },
+
+    {
+      module: require("./collection/doubly-linked-list"),
+      as: "doubly-linked-list"
+    },
+
+    {
+      module: require("./collection/object-hash-map"),
+      as: ["hash-map", "object-hash-map"]
+    },
+
+    {
+      module: require("./collection/lru-hash-map"),
+      as: "lru-hash-map"
+    },
+
+    {
+      module: require("./storage/caching-data-store"),
+      as: "caching-data-store"
+    },
+
+    {
+      module: require("./storage/in-memory-data-store"),
+      as: "in-memory-data-store"
+    },
+
+    {
+      module: require("./storage/lru-data-store"),
+      as: "lru-data-store"
+    },
+
+    {
+      module: require("./time/clock/logical-clock"),
+      as: "logical-clock"
+    },
+
+    {
+      module: require("./time/clock/system-clock"),
+      as: "system-clock"
+    },
+
+    {
+      module: require("./appkit/configuration-magic"),
+      as: "configuration-magic"
+    },
+
+    {
+      module: require("./appkit/config/scoped-configuration-resolver"),
+      as: "scoped-configuration-resolver"
+    },
+
+    {
+      module: require("./appkit/config/scoped-configuration"),
+      as: ["scoped-configuration", "config/scoped-configuration"]
+    },
+
+    {
+      module: require("./appkit/app"),
+      as: "app"
+    },
+
+    {
+      module: require("./runtime"),
+      as: "runtime"
+    },
+
+    {
+      module: require("./logging/logger"),
+      as: "logger"
+    },
+
+    {
+      module: require("./logging/appenders/console-log-appender"),
+      as: ["appenders/console-log", "console-log-appender"]
+    },
+
+    {
+      module: require("./reactive/reactor"),
+      as: "reactor"
+    }
+  ]);
+
+  c.selfRegister({
+    as: "component-registry"
   });
 
   webAliases(c);
@@ -43,9 +153,9 @@ var factory = function(
   return c;
 };
 
-module.exports = factory(
-  require("./util/component-loader"),
+var g = (typeof window === "undefined" ? {} : window);
+g.thicket = module.exports = mod(
+  require("./util/component-registry"),
   require("./web"),
   require("./node")
 );
-

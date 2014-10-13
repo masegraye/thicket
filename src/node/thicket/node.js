@@ -1,7 +1,16 @@
 module.exports = function(c) {
-  c.bulkAlias({
-    "./appkit/bootstrapper"       : "bootstrapper",
-    "./appkit/node-app-container" : "app-container",
-    "./scheduler/node-scheduler"  : "scheduler"
-  });
+  c.registerMany([
+    {
+      module: require("./appkit/bootstrapper"),
+      as: "bootstrapper"
+    },
+    {
+      module: require("./appkit/node-app-container"),
+      as: "app-container"
+    },
+    {
+      module: require("./scheduler/node-scheduler"),
+      as: "scheduler"
+    }
+  ]);
 };
