@@ -16,6 +16,11 @@ var mod = function(
     },
 
     {
+      module: require("./core/countdown-latch"),
+      as: "countdown-latch"
+    },
+
+    {
       module: require("./core/options"),
       as: "options"
     },

@@ -8,6 +8,7 @@ require("./appkit/web-app-container.js");
 require("./collection/doubly-linked-list.js");
 require("./collection/lru-hash-map.js");
 require("./collection/object-hash-map.js");
+require("./core/countdown-latch.js");
 require("./core/lang.js");
 require("./core/options.js");
 require("./core/pub-sub.js");

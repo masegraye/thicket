@@ -5,7 +5,8 @@ var mod = function(
   _,
   Promise,
   Options,
-  Logger
+  Logger,
+  CountdownLatch
 ) {
 
   var Log = Logger.create("AppContainer");
@@ -18,13 +19,31 @@ var mod = function(
     initialize: function(opts) {
       opts = Options.fromObject(opts)
       this._app = opts.getOrError("app");
+
+      var shutdownLatch = new CountdownLatch(1, _.bind(function() {
+        Promise
+          .bind(this)
+          .then(function() {
+            Log.info("Received shutdown request, stopping...");
+            return this._app.stop();
+          })
+          .then(function() {
+            process.exit(0);
+          })
+          .caught(function(err) {
+            Log.error("Caught error shutting down:", err);
+            process.exit(1);
+          });
+      }, this));
+
+      this._requestShutdown = shutdownLatch.step.bind(shutdownLatch);
     },
 
     start: Promise.method(function() {
       return Promise
         .bind(this)
         .then(function() {
-          return this._registerSigInt();
+          return this._registerSig();
         })
         .then(function() {
           return this._app.start();
@@ -42,22 +61,14 @@ var mod = function(
       });
     }),
 
-    _registerSigInt: Promise.method(function() {
-      var app = this._app;
-      process.on("SIGINT", function() {
-        Promise
-          .attempt(function() {
-            Log.info("Received SIGINT, stopping...");
-            return app.stop();
-          })
-          .then(function() {
-            process.exit(0);
-          })
-          .caught(function(err) {
-            Log.error("Caught error shutting down:", err);
-            process.exit(1);
-          });
-      });
+    _registerSig: Promise.method(function() {
+      process.on("SIGINT", _.bind(function() {
+        this._requestShutdown()
+      }, this));
+
+      process.on("SIGTERM", _.bind(function() {
+        this._requestShutdown()
+      }, this));
     })
   });
 
@@ -68,5 +79,6 @@ module.exports = mod(
   require("underscore"),
   require("bluebird"),
   require("../core/options"),
-  require("../logging/logger")
+  require("../logging/logger"),
+  require("../core/countdown-latch")
 );
