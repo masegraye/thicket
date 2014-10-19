@@ -1,6 +1,6 @@
 {
   "name": "thicket",
-  "version": "0.3.9",
+  "version": "0.3.10",
   "description": "Foundational library for building robust, testable, cohesive JavaScript applications.",
   "main": "lib-node/thicket/index.js",
   "author": "Mason Browne <m.public@academy15.com>",

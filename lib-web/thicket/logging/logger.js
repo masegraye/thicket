@@ -43,23 +43,23 @@ var mod = function(
     },
 
     isTraceEnabled: function() {
-      return this.isLogLevelEnabled(Logger.Level.Trace);
+      return this.isLogLevelEnabled(LogUtil.Level.Trace);
     },
 
     isDebugEnabled: function() {
-      return this.isLogLevelEnabled(Logger.Level.Debug);
+      return this.isLogLevelEnabled(LogUtil.Level.Debug);
     },
 
     isInfoEnabled: function() {
-      return this.isLogLevelEnabled(Logger.Level.Info);
+      return this.isLogLevelEnabled(LogUtil.Level.Info);
     },
 
     isErrorEnabled: function() {
-      return this.isLogLevelEnabled(Logger.Level.Error);
+      return this.isLogLevelEnabled(LogUtil.Level.Error);
     },
 
     isFatalEnabled: function() {
-      return this.isLogLevelEnabled(Logger.Level.Fatal);
+      return this.isLogLevelEnabled(LogUtil.Level.Fatal);
     },
 
     isLogLevelEnabled: function(logLevel) {
