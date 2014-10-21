@@ -145,6 +145,16 @@ var mod = function(
     {
       module: require("./reactive/reactor"),
       as: "reactor"
+    },
+
+    {
+      module: require("./messaging/channel"),
+      as: "messaging/channel"
+    },
+
+    {
+      module: require("./core/uuid"),
+      as: "uuid"
     }
   ]);
 

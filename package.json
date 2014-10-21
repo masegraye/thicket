@@ -1,14 +1,15 @@
 {
   "name": "thicket",
-  "version": "0.3.10",
+  "version": "0.4.0",
   "description": "Foundational library for building robust, testable, cohesive JavaScript applications.",
   "main": "lib-node/thicket/index.js",
   "author": "Mason Browne <m.public@academy15.com>",
   "license": "MIT",
   "dependencies": {
     "bluebird": "= 2.2.2",
-    "underscore": "= 1.6.0",
-    "nopt": "= 3.0.1"
+    "mori": "^0.2.9",
+    "nopt": "= 3.0.1",
+    "underscore": "= 1.6.0"
   },
   "devDependencies": {
     "grunt": "0.4.5",
