@@ -8,7 +8,7 @@ var assert  = require("assert"),
 describe("Message Channel", function() {
   it("should honor sentinel rules", function() {
     var sentinel = {};
-    var c = new Channel(sentinel);
+    var c = new Channel({ sentinel: sentinel });
 
     assert.throws(function() {
       c.publish({}, {});
@@ -28,7 +28,7 @@ describe("Message Channel", function() {
           assert.equal(msg.foo, true);
           receiveCount++;
         },
-        c = new Channel(sentinel),
+        c = new Channel({ sentinel: sentinel }),
         subs = [];
 
     subs.push(c.subscribe(sub1));
@@ -57,5 +57,23 @@ describe("Message Channel", function() {
 
     // Make sure you can dispose idempotently
     _.invoke(subs, "dispose");
+
+    subs = [];
+    subs.push(c.subscribe(sub1));
+
+    assert.ok(!c.isDisposed());
+
+    c.dispose();
+
+    assert.ok(c.isDisposed());
+
+    assert.throws(function() {
+      c.subscribe(sub2);
+    });
+
+    assert.throws(function() {
+      c.publish(sentinel, {});
+    });
+
   });
 });

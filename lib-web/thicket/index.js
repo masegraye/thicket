@@ -153,6 +153,16 @@ var mod = function(
     },
 
     {
+      module: require("./messaging/chained-channel"),
+      as: "messaging/chained-channel"
+    },
+
+    {
+      module: require("./messaging/exchange"),
+      as: "messaging/exchange"
+    },
+
+    {
       module: require("./core/uuid"),
       as: "uuid"
     }

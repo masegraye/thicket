@@ -25,6 +25,7 @@ require("./core/uuid.js");
 require("./index.js");
 require("./logging/appenders/console-log-appender.js");
 require("./logging/logger.js");
+require("./messaging/chained-channel.js");
 require("./messaging/channel.js");
 require("./messaging/exchange.js");
 require("./node.js");
