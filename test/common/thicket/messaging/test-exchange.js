@@ -4,8 +4,9 @@ var assert         = require("assert"),
     _              = require("underscore"),
     thicket        = require("../../../../lib-node/thicket"),
     Exchange       = thicket.c("messaging/exchange"),
-    CountdownLatch = thicket.c("countdown-latch");
-
+    CountdownLatch = thicket.c("countdown-latch"),
+    Logger         = thicket.c("logger"),
+    CLA            = thicket.c("appenders/console-log");
 
 describe("Exchange", function() {
 
@@ -17,6 +18,7 @@ describe("Exchange", function() {
   });
 
   it("should send a message from one mailbox to the next", function(done) {
+
     var exchange     = new Exchange(),
         mail1        = exchange.mailbox("one"),
         mail2        = exchange.mailbox("two"),
@@ -42,9 +44,9 @@ describe("Exchange", function() {
     mail1.send({
       to: "two",
       body: { foo: true }
+    }).then(function() {
+      setTimeout(done, 100);
     });
-
-    done();
 
   });
 
