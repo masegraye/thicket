@@ -106,6 +106,8 @@ var mod = function(
       throw new Error("Not implemented!");
     },
 
+
+
     /**
      * Fiber delegate protocol method for a message bound for this Exchange directly.
      *
@@ -292,6 +294,6 @@ module.exports = mod(
   require("../logging/logger"),
   require("../core/options"),
   require("../core/uuid"),
-  require("./channel"),
-  require("./chained-channel")
+  require("../core/channel"),
+  require("../core/chained-channel")
 );

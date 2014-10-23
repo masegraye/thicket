@@ -44,13 +44,11 @@ var mod = function(
 
 
     _publish: function(sentinel, msg) {
-
       this._stateGuard.deny("disposed");
 
       if (this._sentinel !== sentinel) {
         throw new Error("Invalid sentinel provided; publisher must have same sentinel provided during instantiation.");
       }
-
       this._dispatch(msg);
       return true;
     },

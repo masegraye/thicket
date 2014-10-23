@@ -2,8 +2,8 @@
 
 var assert         = require("assert"),
     thicket        = require("../../../../lib-node/thicket"),
-    ChainedChannel = thicket.c("messaging/chained-channel"),
-    Channel        = thicket.c("messaging/channel");
+    ChainedChannel = thicket.c("chained-channel"),
+    Channel        = thicket.c("channel");
 
 describe("Chained Channel", function() {
   it("should forward messages from original channel", function() {

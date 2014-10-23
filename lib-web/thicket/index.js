@@ -98,6 +98,11 @@ var mod = function(
     },
 
     {
+      module: require("./storage/signaling-data-store"),
+      as: "signaling-data-store"
+    },
+
+    {
       module: require("./time/clock/logical-clock"),
       as: "logical-clock"
     },
@@ -148,13 +153,13 @@ var mod = function(
     },
 
     {
-      module: require("./messaging/channel"),
-      as: "messaging/channel"
+      module: require("./core/channel"),
+      as: "channel"
     },
 
     {
-      module: require("./messaging/chained-channel"),
-      as: "messaging/chained-channel"
+      module: require("./core/chained-channel"),
+      as: "chained-channel"
     },
 
     {

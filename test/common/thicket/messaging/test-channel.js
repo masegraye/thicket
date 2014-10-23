@@ -2,7 +2,7 @@
 
 var assert  = require("assert"),
     thicket = require("../../../../lib-node/thicket"),
-    Channel = thicket.c("messaging/channel"),
+    Channel = thicket.c("channel"),
     _       = require("underscore");
 
 describe("Message Channel", function() {

@@ -6,7 +6,8 @@ var mod = function(
   Promise,
   Options,
   InMemoryDataStore,
-  UnitSequencer
+  UnitSequencer,
+  Entry
 ) {
 
   // Appropriate for the default sequencer (non-temporal)
@@ -199,44 +200,6 @@ var mod = function(
     })
   });
 
-  var Entry = function() {
-    this.initialize.apply(this, arguments);
-  };
-
-  _.extend(Entry.prototype, {
-    initialize: function(opts) {
-      opts = Options.fromObject(opts);
-      // Perfectly acceptable to pass in undefined...
-      this._value = opts.getOrElse("value", undefined);
-      this._lastSequence = opts.getOrError("initialSequence");
-    },
-
-    isExpired: function(sequence, ttl) {
-      // E.g., lastSequence = 4, ttl = 1, sequence = 5: expired
-      //       lastSequence = 4, ttl = 1, sequence = 4: not expired
-      //       lastSequence = 4, ttl = 2, sequence = 5: not expired
-      return this._lastSequence + ttl <= sequence;
-    },
-
-    touch: function(sequence) {
-      this._lastSequence = sequence;
-    },
-
-    update: function(val, sequence) {
-      this._value        = val;
-      this._lastSequence = sequence;
-    },
-
-    dispose: function() {
-      this._value        = null;
-      this._lastSequence = null;
-    },
-
-    value: function() {
-      return this._value;
-    }
-  });
-
   return CachingDataStore;
 
 };
@@ -246,5 +209,6 @@ module.exports = mod(
   require("bluebird"),
   require("../core/options"),
   require("./in-memory-data-store"),
-  require("../core/sequencer/unit-sequencer")
+  require("../core/sequencer/unit-sequencer"),
+  require("./internals/expiring-entry")
 );
