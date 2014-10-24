@@ -166,6 +166,62 @@ describe("ExpiringDataStore", function() {
       .lastly(function() {
         done();
       });
-
   });
-})
+
+
+  it("should otherwise behave as a normal data store", function(done) {
+    var store = new SignalingDataStore();
+    Promise
+      .attempt(function() {
+        return store
+          .put("key-one", "val-one")
+          .then(function() {
+            return store.put("key-two", "val-two");
+          })
+          .then(function() {
+            return store.get("key-one");
+          })
+          .then(function(one) {
+            assert.equal(one, "val-one");
+            return store.get("key-two");
+          })
+          .then(function(two) {
+            assert.equal(two, "val-two");
+            return store.get("dne");
+          })
+          .then(function(val) {
+            assert.ok(!val);
+            return store.exists("dne");
+          })
+          .then(function(exists) {
+            assert.ok(!exists);
+            return store.exists("key-one");
+          })
+          .then(function(exists) {
+            assert.ok(exists);
+            return store.remove("key-two");
+          })
+          .then(function(val) {
+            assert.equal(val, "val-two");
+            return store.exists("key-two");
+          })
+          .then(function(exists) {
+            assert.ok(!exists);
+            return store.clear();
+          })
+          .then(function() {
+            return store.get("key-one");
+          })
+          .then(function(item) {
+            assert.ok(!item);
+          });
+      })
+      .caught(function(err){
+        throw err;
+      })
+      .lastly(function() {
+        done();
+      });
+  });
+
+});
