@@ -173,6 +173,11 @@ var mod = function(
     },
 
     {
+      module: require("./core/channel/composite-channel"),
+      as: "composite-channel"
+    },
+
+    {
       module: require("./messaging/exchange"),
       as: "messaging/exchange"
     },
