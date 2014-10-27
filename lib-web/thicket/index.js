@@ -16,6 +16,11 @@ var mod = function(
     },
 
     {
+      module: require("./util/periodic"),
+      as: "periodic"
+    },
+
+    {
       module: require("./core/countdown-latch"),
       as: "countdown-latch"
     },

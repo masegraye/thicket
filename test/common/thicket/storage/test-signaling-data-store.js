@@ -2,7 +2,7 @@
 
 var assert             = require("assert"),
     Promise            = require("bluebird"),
-    thicket            = require("thicket"),
+    thicket            = require("../../../../lib-node/thicket"),
     SignalingDataStore = thicket.c("signaling-data-store");
 
 Promise.onPossiblyUnhandledRejection(function(e) {

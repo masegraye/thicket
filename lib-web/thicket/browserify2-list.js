@@ -50,4 +50,5 @@ require("./time/clock/logical-clock.js");
 require("./time/clock/system-clock.js");
 require("./util/component-loader.js");
 require("./util/component-registry.js");
+require("./util/periodic.js");
 require("./web.js");

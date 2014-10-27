@@ -3,3 +3,4 @@ npm-debug.log
 *.iml
 .idea/
 thicket.xml
+.DS_Store
