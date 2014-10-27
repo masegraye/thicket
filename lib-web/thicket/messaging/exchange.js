@@ -8,9 +8,8 @@ var mod = function(
   Logger,
   Options,
   UUID,
-  Channel,
-  ChainedChannel,
   InMemoryFiber,
+  Mailbox,
   Dispatcher
 ) {
 
@@ -149,62 +148,10 @@ var mod = function(
      * @private
      */
     receiveFiberMessage: function(env) {
-
+      throw new Error("Not implemented");
     }
   });
 
-  var Mailbox = function() {
-    this.initialize.apply(this, arguments);
-  };
-
-  _.extend(Mailbox.prototype, {
-    initialize: function(opts) {
-      opts = Options.fromObject(opts);
-      this._ownerIdentity  = opts.getOrError("identity");
-      this._exchange       = opts.getOrError("exchange");
-      this._ingressChannel = new Channel({ sentinel: this });
-    },
-
-    /**
-     * Returns a new ChainedChannel chained to this Mailbox's
-     * privately-owned inbound Channel.
-     * @returns {ChainedChannel}
-     */
-    ingressChannel: function() {
-      return new ChainedChannel({
-        sentinel: this,
-        chainTo: this._ingressChannel
-      });
-    },
-
-    send: function(opts) {
-      opts = _.extend({}, opts || {}, {
-        from: this._ownerIdentity
-      });
-      return this._exchange.send(opts);
-    },
-
-    reply: function(msgId, opts) {
-      opts = _.extend({}, opts || {}, {
-        rMsgId: msgId,
-        from: this._ownerIdentity
-      });
-
-      return this._exchange.reply(opts);
-    },
-
-    sendAndReceive: function(opts) {
-      opts = _.extend({}, opts || {}, {
-        from: this._ownerIdentity
-      });
-
-      return this._exchange.sendAndReceive(opts);
-    },
-
-    _dispatch: function(msg) {
-      this._ingressChannel.publish(this, msg);
-    }
-  });
 
   return Exchange;
 };
@@ -216,8 +163,7 @@ module.exports = mod(
   require("../logging/logger"),
   require("../core/options"),
   require("../core/uuid"),
-  require("../core/channel"),
-  require("../core/chained-channel"),
   require("./fiber/in-memory-fiber"),
+  require("./internals/mailbox"),
   require("../core/dispatcher")
 );

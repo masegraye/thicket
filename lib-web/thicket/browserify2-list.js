@@ -32,6 +32,7 @@ require("./messaging/chained-channel.js");
 require("./messaging/channel.js");
 require("./messaging/exchange.js");
 require("./messaging/fiber/in-memory-fiber.js");
+require("./messaging/internals/mailbox.js");
 require("./node.js");
 require("./reactive/filter-transform.js");
 require("./reactive/map-transform.js");
