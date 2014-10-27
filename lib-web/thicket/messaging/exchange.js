@@ -10,24 +10,35 @@ var mod = function(
   UUID,
   InMemoryFiber,
   Mailbox,
-  Dispatcher
+  Dispatcher,
+  SignalingDataStore,
+  Periodic,
+  ClockSequencer,
+  SystemClock,
+  Runtime
 ) {
 
   var Exchange = function() {
     this.initialize.apply(this, arguments);
   };
 
-  var MSG_SEND             = "send",
-      MSG_SEND_AND_RECEIVE = "sendAndReceive",
-      MSG_REPLY            = "receive";
+  var MSG_SEND             = Exchange.MSG_SEND             = "send",
+      MSG_SEND_AND_RECEIVE = Exchange.MSG_SEND_AND_RECEIVE = "sendAndReceive",
+      MSG_REPLY            = Exchange.MSG_REPLY            = "reply";
 
   var Log = Logger.create("Exchange");
+
+
 
   _.extend(Exchange.prototype, {
     initialize: function(opts) {
       opts = Options.fromObject(opts);
 
       this._identity = opts.getOrElse("identity", UUID.v4());
+
+      this._runtime = opts.getOrElseFn("runtime", function() {
+        return new Runtime();
+      });
 
       this._mailboxFiberDelegate = {
         receiveFiberMessage: this._receiveMailboxFiberMessage.bind(this)
@@ -49,7 +60,45 @@ var mod = function(
         prefix: "_onMbx"
       });
 
+      // Data store for pending requests
+      this._outstandingRequests = new SignalingDataStore({
+        ttl: opts.getOrElse("replyTimeout", 10000),
+        sequencer: new ClockSequencer({
+          clock: opts.getOrElseFn("clock", function() {
+            return new SystemClock();
+          })
+        })
+      });
+
+      // Dispatches store signals (e.g., expiry)
+      this._expiryDispatcher = new Dispatcher({
+        delegate: this,
+        prefix: "_onStoreSignal",
+        listen: this._outstandingRequests.signalChannel()
+      });
+
+      // This guy triggers periodic expiry checks in the store
+      this._checkExpiry = new Periodic({
+        scheduler: this._runtime.scheduler(),
+        task: _.bind(function() {
+          return this
+            ._outstandingRequests
+            .sentrySequencer()
+            .advance();
+        }, this),
+        interval: opts.getOrElse("expiryInterval", 1000)
+      });
+
+      this._checkExpiry.start();
     },
+
+    dispose: function() {
+      // TODO: Cancel outstanding requests
+
+      // TODO: Dispose all the things
+      this._checkExpiry.stop();
+    },
+
 
     /**
      * Builds a Mailbox for the provided `requesterIdentity`. The
@@ -78,33 +127,60 @@ var mod = function(
     },
 
 
-    send: function(opts) {
-      opts = Options.fromObject(opts);
+    send: function(env) {
+      env = Options.fromObject(env);
 
       return this._fiber.send({
-        from:  opts.getOrError("from"),
-        to:    opts.getOrError("to"),
-        body:  opts.getOrError("body"),
+        from:  env.getOrError("from"),
+        to:    env.getOrError("to"),
+        body:  env.getOrError("body"),
         mT:    MSG_SEND,
         msgId: UUID.v4()
       });
     },
 
-    reply: function(opts) {
-      opts = Options.fromObject(opts);
+
+    reply: function(env) {
+      env = Options.fromObject(env);
       return this._fiber.send({
-        from:   opts.getOrError("from"),
-        to:     opts.getOrError("to"),
-        body:   opts.getOrError("body"),
+        from:   env.getOrError("from"),
+        to:     env.getOrError("to"),
+        body:   env.getOrError("body"),
         mT:     MSG_REPLY,
         msgId:  UUID.v4(),
-        rMsgId: opts.getOrError("rMsgId")
+        rMsgId: env.getOrError("rMsgId")
       });
     },
 
 
-    sendAndReceive: function(opts) {
-      throw new Error("Not implemented");
+    sendAndReceive: function(env, opts) {
+      env  = Options.fromObject(env);
+      opts = Options.fromObject(opts);
+
+      var msgId = UUID.v4(),
+          deferred = defer(),
+          fibEnv = {
+            from:  env.getOrError("from"),
+            to:    env.getOrError("to"),
+            body:  env.getOrError("body"),
+            mT:    MSG_SEND_AND_RECEIVE,
+            msgId: msgId
+          },
+          req = {
+            deferred: deferred,
+            fibEnv:   fibEnv
+          };
+
+      return this
+        ._outstandingRequests
+        .put(msgId, req, {ttl: opts.getOrElse("replyTimeout")})
+        .bind(this)
+        .then(function() {
+          return this._fiber.send(fibEnv);
+        })
+        .then(function() {
+          return req.deferred.promise;
+        });
     },
 
 
@@ -113,6 +189,7 @@ var mod = function(
         throw new Error("Mailbox registration requires a unique identity");
       }
     },
+
 
     /**
      * Fiber delegate protocol method for a message bound for a Mailbox owned by
@@ -124,6 +201,7 @@ var mod = function(
     _receiveMailboxFiberMessage: function(env) {
       this._mailboxDispatcher.dispatch(env);
     },
+
 
     _onMbxSend: function(env) {
       var oEnv     = Options.fromObject(env),
@@ -141,6 +219,61 @@ var mod = function(
       }
     },
 
+    // TODO: Should this go along the mailbox ingress channel?
+    // Or should it be cb-based?
+    _onMbxSendAndReceive: function(env) {
+      var oEnv = Options.fromObject(env),
+          identity = oEnv.getOrElse("to"),
+          body = oEnv.getOrElse("body");
+
+      if (!(identity || body)) {
+        Log.info("Exchange received a message with missing envelope information", env);
+        return;
+      }
+
+      var mbox = M.get(this._mailboxes, identity);
+      if (mbox) {
+        mbox._dispatch(env);
+      }
+    },
+
+
+    _onMbxReply: function(env) {
+      var oEnv     = Options.fromObject(env),
+          rMsgId   = oEnv.getOrElse("rMsgId");
+
+      // Don't dispatch vetted replies. Just fulfill the promise
+      Promise
+        .bind(this)
+        .then(function(){
+          return this._outstandingRequests.remove(rMsgId);
+        })
+        .then(function(request) {
+          if (request) {
+            request.deferred.resolve(env);
+          }
+        });
+    },
+
+
+    /**
+     * Fired when a request in the outstanding requests store is past due.
+     */
+    _onStoreSignalExpired: function(sig) {
+      Log.debug("Expired entry in store", sig);
+      Promise
+        .bind(this)
+        .then(function() {
+          return this._outstandingRequests.remove(sig.key);
+        })
+        .then(function(request) {
+          if (request) {
+            request.deferred.reject(new Promise.TimeoutError());
+          }
+        });
+    },
+
+
     /**
      * Fiber delegate protocol method for a message bound for this Exchange directly.
      *
@@ -152,6 +285,20 @@ var mod = function(
     }
   });
 
+
+  var defer = function(){
+    var res, rej;
+    var p = new Promise(function() {
+      res = arguments[0];
+      rej = arguments[1];
+    });
+
+    return {
+      promise: p,
+      resolve: res,
+      reject: rej
+    };
+  };
 
   return Exchange;
 };
@@ -165,5 +312,10 @@ module.exports = mod(
   require("../core/uuid"),
   require("./fiber/in-memory-fiber"),
   require("./internals/mailbox"),
-  require("../core/dispatcher")
+  require("../core/dispatcher"),
+  require("../storage/signaling-data-store"),
+  require("../util/periodic"),
+  require("../core/sequencer/clock-sequencer"),
+  require("../time/clock/system-clock"),
+  require("../runtime")
 );

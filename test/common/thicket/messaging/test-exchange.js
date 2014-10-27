@@ -48,4 +48,37 @@ describe("Exchange", function() {
 
   });
 
+  it("should send and receive (without friendly helper)", function(done) {
+
+    var exchange = new Exchange({
+          replyTimeout: 50
+        }),
+        mail1     = exchange.mailbox("one"),
+        mail2     = exchange.mailbox("two"),
+        doneLatch = new CountdownLatch(2, done);
+
+    mail2.ingressChannel().subscribe(function(env) {
+      if (env.mT === Exchange.MSG_SEND_AND_RECEIVE) {
+        assert.equal(env.body.foo, "foo");
+        doneLatch.step();
+        mail2.reply(env.msgId, {
+          to: env.from,
+          body: {bar: "bar"}
+        });
+      }
+    });
+
+    mail1
+      .sendAndReceive({
+        to: "two",
+        body: {foo:"foo"}
+      })
+      .then(function(env) {
+        assert.equal(env.body.bar, "bar");
+      })
+      .lastly(function() {
+        doneLatch.step();
+      });
+  });
+
 });
