@@ -57,7 +57,7 @@ describe("Exchange", function() {
         mail2     = exchange.mailbox("two"),
         doneLatch = new CountdownLatch(2, done);
 
-    mail2.ingressChannel().subscribe(function(env) {
+    mail2.requestReplyChannel().subscribe(function(env) {
       if (env.mT === Exchange.MSG_SEND_AND_RECEIVE) {
         assert.equal(env.body.foo, "foo");
         doneLatch.step();
@@ -65,6 +65,8 @@ describe("Exchange", function() {
           to: env.from,
           body: {bar: "bar"}
         });
+      } else {
+        throw new Error("Should not have gotten this");
       }
     });
 

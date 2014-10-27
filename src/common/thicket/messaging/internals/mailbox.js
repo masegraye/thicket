@@ -5,7 +5,8 @@ var mod = function(
   _,
   Options,
   ChainedChannel,
-  Channel
+  Channel,
+  CompositeChannel
 ) {
 
 
@@ -18,7 +19,14 @@ var mod = function(
       opts = Options.fromObject(opts);
       this._ownerIdentity  = opts.getOrError("identity");
       this._exchange       = opts.getOrError("exchange");
-      this._ingressChannel = new Channel({ sentinel: this });
+
+      this._oneShotChannel        = new Channel({ sentinel: this });
+      this._requestReplyChannel   = new Channel({ sentinel: this });
+
+      this._ingressChannel = new CompositeChannel({
+        sentinel: this,
+        listen: [this._oneShotChannel, this._requestReplyChannel]
+      });
     },
 
     /**
@@ -30,6 +38,13 @@ var mod = function(
       return new ChainedChannel({
         sentinel: this,
         chainTo: this._ingressChannel
+      });
+    },
+
+    requestReplyChannel: function() {
+      return new ChainedChannel({
+        sentinel: this,
+        chainTo: this._requestReplyChannel
       });
     },
 
@@ -57,8 +72,12 @@ var mod = function(
       return this._exchange.sendAndReceive(opts);
     },
 
-    _dispatch: function(msg) {
-      this._ingressChannel.publish(this, msg);
+    _receiveOneShot: function(msg) {
+      this._oneShotChannel.publish(this, msg);
+    },
+
+    _receiveRequestReply: function(msg) {
+      this._requestReplyChannel.publish(this, msg);
     }
   });
 
@@ -68,6 +87,7 @@ var mod = function(
 module.exports = mod(
   require("underscore"),
   require("../../core/options"),
-  require("../../core/chained-channel"),
-  require("../../core/channel")
+  require("../../core/channel/chained-channel"),
+  require("../../core/channel/channel"),
+  require("../../core/channel/composite-channel")
 );

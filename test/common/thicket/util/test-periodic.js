@@ -37,13 +37,13 @@ describe("Periodic", function() {
         }, this));
         periodic.start();
       })
-      .delay(20)
+      .delay(22)
       .then(function() {
         periodic.stop();
         this.actualCount = this.actualResults.length;
         assert.ok(runCount > 0, "ran at least once");
         assert.ok(this.actualCount > 0, "at least one result");
-        assert.ok(this.actualCount > 4, "more than 4 results");
+        assert.ok(this.actualCount > 3, "more than 3 results");
       })
       .delay(10)
       .then(function() {

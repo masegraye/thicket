@@ -214,7 +214,7 @@ var mod = function(
 
       var mbox = M.get(this._mailboxes, identity);
       if (mbox) {
-        mbox._dispatch(env);
+        mbox._receiveOneShot(env);
       }
     },
 
@@ -232,7 +232,7 @@ var mod = function(
 
       var mbox = M.get(this._mailboxes, identity);
       if (mbox) {
-        mbox._dispatch(env);
+        mbox._receiveRequestReply(env);
       }
     },
 
