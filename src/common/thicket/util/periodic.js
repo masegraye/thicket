@@ -27,7 +27,6 @@ var mod = function(
       this._stateGuard   = new StateGuard(["disposed", "started"]);
       this._channel      = new Channel({ sentinel: this });
       this._taskId       = null;
-      this._isRunning    = false;
 
       _.bindAll(this, "_runTask");
     },

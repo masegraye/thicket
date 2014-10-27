@@ -21,6 +21,11 @@ var mod = function(
     },
 
     {
+      module: require("./core/dispatcher"),
+      as: "dispatcher"
+    },
+
+    {
       module: require("./core/countdown-latch"),
       as: "countdown-latch"
     },
