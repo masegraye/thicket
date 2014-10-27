@@ -43,6 +43,10 @@ var mod = function(
         delegate: this
       });
 
+      this._mailboxDispatcher = new Dispatcher({
+        prefix: "_onMbx"
+      });
+
     },
 
     /**
@@ -104,10 +108,11 @@ var mod = function(
      * @private
      */
     _receiveMailboxFiberMessage: function(env) {
-      env = Options.fromObject(env);
+      this._mailboxDispatcher.dispatch(env);
+    },
 
-      console.log(env);
-      throw new Error("Not implemented!");
+    _onMbxSend: function(env) {
+      console.log("GOT", env);
     },
 
     /**
