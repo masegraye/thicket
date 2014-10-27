@@ -29,7 +29,6 @@ var mod = function(
   var Log = Logger.create("Exchange");
 
 
-
   _.extend(Exchange.prototype, {
     initialize: function(opts) {
       opts = Options.fromObject(opts);

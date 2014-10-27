@@ -53,6 +53,6 @@ var mod = function(
 module.exports = mod(
   require("underscore"),
   require("mori"),
-  require("../core/options"),
+  require("../options"),
   require("./channel")
 );

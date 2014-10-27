@@ -138,7 +138,7 @@ var mod = function(
 module.exports = mod(
   require("underscore"),
   require("mori"),
-  require("../core/uuid"),
-  require("../core/options"),
-  require("../core/state-guard")
+  require("../uuid"),
+  require("../options"),
+  require("../state-guard")
 );

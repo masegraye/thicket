@@ -163,12 +163,12 @@ var mod = function(
     },
 
     {
-      module: require("./core/channel"),
+      module: require("./core/channel/channel"),
       as: "channel"
     },
 
     {
-      module: require("./core/chained-channel"),
+      module: require("./core/channel/chained-channel"),
       as: "chained-channel"
     },
 

@@ -1,7 +1,7 @@
 "use strict";
 
 var assert  = require("assert"),
-    thicket = require("../../../../lib-node/thicket"),
+    thicket = require("../../../../../lib-node/thicket"),
     Channel = thicket.c("channel"),
     _       = require("underscore");
 
