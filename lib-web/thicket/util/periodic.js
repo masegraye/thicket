@@ -86,11 +86,11 @@ var mod = function(
 
 
     _notifyResults: function(results) {
-      if (this._stateGuard.applied("disposed") || !this._stateGuard.applied("started")) {
-        return;
-      }
-
       this._schedulerRef.get().runSoon(_.bind(function() {
+
+        if (this._stateGuard.applied("disposed") || !this._stateGuard.applied("started")) {
+          return;
+        }
 
         if (Log.isTraceEnabled()) {
           Log.trace("Notifying results", results);
