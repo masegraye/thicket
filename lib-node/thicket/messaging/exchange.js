@@ -22,6 +22,8 @@ var mod = function(
       MSG_SEND_AND_RECEIVE = "sendAndReceive",
       MSG_REPLY            = "receive";
 
+  var Log = Logger.create("Exchange");
+
   _.extend(Exchange.prototype, {
     initialize: function(opts) {
       opts = Options.fromObject(opts);
@@ -41,6 +43,11 @@ var mod = function(
       this._fiber.registerEntity({
         identity: this._identity,
         delegate: this
+      });
+
+      this._mailboxDispatcher = new Dispatcher({
+        delegate: this,
+        prefix: "_onMbx"
       });
 
     },
@@ -84,6 +91,18 @@ var mod = function(
       });
     },
 
+    reply: function(opts) {
+      opts = Options.fromObject(opts);
+      return this._fiber.send({
+        from:   opts.getOrError("from"),
+        to:     opts.getOrError("to"),
+        body:   opts.getOrError("body"),
+        mT:     MSG_REPLY,
+        msgId:  UUID.v4(),
+        rMsgId: opts.getOrError("rMsgId")
+      });
+    },
+
 
     sendAndReceive: function(opts) {
       throw new Error("Not implemented");
@@ -104,10 +123,23 @@ var mod = function(
      * @private
      */
     _receiveMailboxFiberMessage: function(env) {
-      env = Options.fromObject(env);
+      this._mailboxDispatcher.dispatch(env);
+    },
 
-      console.log(env);
-      throw new Error("Not implemented!");
+    _onMbxSend: function(env) {
+      var oEnv     = Options.fromObject(env),
+          identity = oEnv.getOrElse("to"),
+          body     = oEnv.getOrElse("body");
+
+      if (!(identity || body)) {
+        Log.info("Exchange received a message with missing envelope information", env);
+        return;
+      }
+
+      var mbox = M.get(this._mailboxes, identity);
+      if (mbox) {
+        mbox._dispatch(env);
+      }
     },
 
     /**
@@ -128,9 +160,9 @@ var mod = function(
   _.extend(Mailbox.prototype, {
     initialize: function(opts) {
       opts = Options.fromObject(opts);
-      this._ownerIdentity = opts.getOrError("identity");
-      this._exchange      = opts.getOrError("exchange");
-      this._inbound       = new Channel({ sentinel: this });
+      this._ownerIdentity  = opts.getOrError("identity");
+      this._exchange       = opts.getOrError("exchange");
+      this._ingressChannel = new Channel({ sentinel: this });
     },
 
     /**
@@ -138,10 +170,10 @@ var mod = function(
      * privately-owned inbound Channel.
      * @returns {ChainedChannel}
      */
-    inboundChannel: function() {
+    ingressChannel: function() {
       return new ChainedChannel({
         sentinel: this,
-        chainTo: this._inbound
+        chainTo: this._ingressChannel
       });
     },
 
@@ -152,12 +184,25 @@ var mod = function(
       return this._exchange.send(opts);
     },
 
+    reply: function(msgId, opts) {
+      opts = _.extend({}, opts || {}, {
+        rMsgId: msgId,
+        from: this._ownerIdentity
+      });
+
+      return this._exchange.reply(opts);
+    },
+
     sendAndReceive: function(opts) {
       opts = _.extend({}, opts || {}, {
         from: this._ownerIdentity
       });
 
       return this._exchange.sendAndReceive(opts);
+    },
+
+    _dispatch: function(msg) {
+      this._ingressChannel.publish(this, msg);
     }
   });
 

@@ -29,7 +29,7 @@ describe("Exchange", function() {
     assert.ok(mail2);
 
 
-    mail2.inboundChannel().subscribe(function(msg) {
+    mail2.ingressChannel().subscribe(function(msg) {
       receiveCount++;
 
       assert.equal(msg.from, "one", "message sent from one");
@@ -44,8 +44,6 @@ describe("Exchange", function() {
     mail1.send({
       to: "two",
       body: { foo: true }
-    }).then(function() {
-      setTimeout(done, 100);
     });
 
   });
