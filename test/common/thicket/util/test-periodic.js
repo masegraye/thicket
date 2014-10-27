@@ -41,20 +41,17 @@ describe("Periodic", function() {
       .then(function() {
         periodic.stop();
         this.actualCount = this.actualResults.length;
-
         assert.ok(runCount > 0, "ran at least once");
         assert.ok(this.actualCount > 0, "at least one result");
         assert.ok(this.actualCount > 4, "more than 4 results");
       })
       .delay(10)
       .then(function() {
-        
         assert.equal(this.actualCount, this.actualResults.length, "no more results after having stopped periodic");
         assert.equal(this.actualResults[0].result, "foo", "foo result");
         this.sub.dispose();
       })
       .caught(function(err) {
-        console.log("EEEEH");
         throw err;
       })
       .lastly(function() {
