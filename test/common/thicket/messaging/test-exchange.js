@@ -1,6 +1,7 @@
 "use strict";
 
 var assert         = require("assert"),
+    Promise        = require("bluebird"),
     _              = require("underscore"),
     thicket        = require("../../../../lib-node/thicket"),
     Exchange       = thicket.c("messaging/exchange"),
@@ -50,9 +51,7 @@ describe("Exchange", function() {
 
   it("should send and receive (without friendly helper)", function(done) {
 
-    var exchange = new Exchange({
-          replyTimeout: 50
-        }),
+    var exchange = new Exchange(),
         mail1     = exchange.mailbox("one"),
         mail2     = exchange.mailbox("two"),
         doneLatch = new CountdownLatch(2, done);
@@ -83,4 +82,28 @@ describe("Exchange", function() {
       });
   });
 
+  it("should respect timeouts", function(done) {
+    var exchange = new Exchange({
+          expiryInterval: 3
+        }),
+        mail1    = exchange.mailbox("one");
+
+    mail1
+      .sendAndReceive({
+        to: "two",
+        body: {foo: "foo"}
+      }, {replyTimeout: 15})
+      .bind({err: null, result: null})
+      .then(function(result) {
+        this.result = result;
+      })
+      .caught(Promise.TimeoutError, function(err) {
+        this.err = err;
+      })
+      .lastly(function() {
+        assert.ok(this.err);
+        assert.ok(!this.result);
+        done();
+      });
+  });
 });

@@ -8,6 +8,8 @@ var mod = function(
   Logger,
   Options,
   UUID,
+  DelegatingForwardingSequencer,
+  UnitSequencer,
   InMemoryFiber,
   Mailbox,
   Dispatcher,
@@ -76,20 +78,23 @@ var mod = function(
         listen: this._outstandingRequests.signalChannel()
       });
 
+      this._compositeSeq = new DelegatingForwardingSequencer({
+        delegate: new UnitSequencer(),
+        targets: [this._outstandingRequests.sequencer(), this._outstandingRequests.sentrySequencer()]
+      })
+
       // This guy triggers periodic expiry checks in the store
       this._checkExpiry = new Periodic({
         scheduler: this._runtime.scheduler(),
         task: _.bind(function() {
-          return this
-            ._outstandingRequests
-            .sentrySequencer()
-            .advance();
+          return this._compositeSeq.advance();
         }, this),
         interval: opts.getOrElse("expiryInterval", 1000)
       });
 
       this._checkExpiry.start();
     },
+
 
     dispose: function() {
       // TODO: Cancel outstanding requests
@@ -309,6 +314,8 @@ module.exports = mod(
   require("../logging/logger"),
   require("../core/options"),
   require("../core/uuid"),
+  require("../core/sequencer/delegating-forwarding-sequencer"),
+  require("../core/sequencer/unit-sequencer"),
   require("./fiber/in-memory-fiber"),
   require("./internals/mailbox"),
   require("../core/dispatcher"),

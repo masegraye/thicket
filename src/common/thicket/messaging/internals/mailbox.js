@@ -48,28 +48,28 @@ var mod = function(
       });
     },
 
-    send: function(opts) {
-      opts = _.extend({}, opts || {}, {
+    send: function(env) {
+      env = _.extend({}, env || {}, {
         from: this._ownerIdentity
       });
-      return this._exchange.send(opts);
+      return this._exchange.send(env);
     },
 
-    reply: function(msgId, opts) {
-      opts = _.extend({}, opts || {}, {
+    reply: function(msgId, env) {
+      env = _.extend({}, env || {}, {
         rMsgId: msgId,
         from: this._ownerIdentity
       });
 
-      return this._exchange.reply(opts);
+      return this._exchange.reply(env);
     },
 
-    sendAndReceive: function(opts) {
-      opts = _.extend({}, opts || {}, {
+    sendAndReceive: function(env, opts) {
+      env = _.extend({}, env || {}, {
         from: this._ownerIdentity
       });
 
-      return this._exchange.sendAndReceive(opts);
+      return this._exchange.sendAndReceive(env, opts);
     },
 
     _receiveOneShot: function(msg) {

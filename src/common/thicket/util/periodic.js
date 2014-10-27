@@ -37,7 +37,7 @@ var mod = function(
         .deny("disposed", "started")
         .apply("started");
 
-      this._schedulerRef.get().runSoon(this._runTask);
+      this._scheduleNext();
     },
 
 
