@@ -311,7 +311,7 @@ module.exports = mod(
   require("underscore"),
   require("bluebird"),
   require("mori"),
-  require("../logging/logger"),
+  require("../core/logging/logger"),
   require("../core/options"),
   require("../core/uuid"),
   require("../core/sequencer/delegating-forwarding-sequencer"),

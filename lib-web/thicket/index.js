@@ -148,12 +148,12 @@ var mod = function(
     },
 
     {
-      module: require("./logging/logger"),
+      module: require("./core/logging/logger"),
       as: "logger"
     },
 
     {
-      module: require("./logging/appenders/console-log-appender"),
+      module: require("./core/logging/appenders/console-log-appender"),
       as: ["appenders/console-log", "console-log-appender"]
     },
 

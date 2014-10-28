@@ -76,7 +76,7 @@ module.exports = mod(
   require("underscore"),
   require("bluebird"),
   require("../core/options"),
-  require("../logging/logger"),
+  require("../core/logging/logger"),
   require("./configuration-magic"),
   require("./node-app-container"),
   require("./app")

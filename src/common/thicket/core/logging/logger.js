@@ -187,6 +187,6 @@ var mod = function(
 
 module.exports = mod(
   require("underscore"),
-  require("../core/ref"),
-  require("../core/options")
+  require("../ref"),
+  require("../options")
 );

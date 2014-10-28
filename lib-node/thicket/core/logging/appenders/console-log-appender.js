@@ -90,5 +90,5 @@ var mod = function(
 
 module.exports = mod(
   require("underscore"),
-  require("../../core/options")
+  require("../../options")
 );

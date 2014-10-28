@@ -47,6 +47,6 @@ var mod = function(
 
 module.exports = mod(
   require("underscore"),
-  require("../../logging/logger"),
+  require("../../core/logging/logger"),
   require("../../core/options")
 );

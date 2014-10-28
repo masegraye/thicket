@@ -148,5 +148,5 @@ module.exports = mod(
   require("../core/state-guard"),
   require("../core/channel"),
   require("../core/chained-channel"),
-  require("../logging/logger")
+  require("../core/logging/logger")
 );

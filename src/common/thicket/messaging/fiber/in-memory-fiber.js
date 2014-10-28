@@ -143,5 +143,5 @@ module.exports = mod(
   require("mori"),
   require("../../core/options"),
   require("../../core/uuid"),
-  require("../../logging/logger")
+  require("../../core/logging/logger")
 );

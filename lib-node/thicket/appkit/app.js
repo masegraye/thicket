@@ -101,7 +101,7 @@ var mod = function(
 module.exports = mod(
   require("underscore"),
   require("bluebird"),
-  require("../logging/logger"),
+  require("../core/logging/logger"),
   require("../core/options"),
   require("../core/state-guard"),
   require("../runtime"),

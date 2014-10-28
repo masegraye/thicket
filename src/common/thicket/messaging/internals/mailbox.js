@@ -35,17 +35,15 @@ var mod = function(
      * @returns {ChainedChannel}
      */
     ingressChannel: function() {
-      return new ChainedChannel({
-        sentinel: this,
-        chainTo: this._ingressChannel
-      });
+      return this._ingressChannel;
+    },
+
+    oneShotChannel: function() {
+      return this._oneShotChannel;
     },
 
     requestReplyChannel: function() {
-      return new ChainedChannel({
-        sentinel: this,
-        chainTo: this._requestReplyChannel
-      });
+      return this._requestReplyChannel;
     },
 
     send: function(env) {

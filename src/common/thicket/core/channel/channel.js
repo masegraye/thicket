@@ -128,6 +128,10 @@ var mod = function(
 
 
     dispatch: function(msg) {
+      if (this._stateGuard.applied("disposed")) {
+        return;
+      }
+
       this._handler(msg);
     }
   });

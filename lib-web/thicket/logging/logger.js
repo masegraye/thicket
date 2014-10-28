@@ -34,6 +34,10 @@ var mod = function(
       this._log(LogUtil.Level.Info, _.toArray(arguments));
     },
 
+    warn: function() {
+      this._log(LogUtil.Level.Warn, _.toArray(arguments));
+    },
+
     error: function() {
       this._log(LogUtil.Level.Error, _.toArray(arguments));
     },
@@ -52,6 +56,10 @@ var mod = function(
 
     isInfoEnabled: function() {
       return this.isLogLevelEnabled(LogUtil.Level.Info);
+    },
+
+    isWarnEnabled: function() {
+      return this.isLogLevelEnabled(LogUtil.Level.Warn);
     },
 
     isErrorEnabled: function() {
@@ -122,11 +130,12 @@ var mod = function(
 
   _.extend(LogUtil, {
     Level: {
-      Trace: b(parseInt("11111", 2)),
-      Debug: b(parseInt("01111", 2)),
-      Info:  b(parseInt("00111", 2)),
-      Error: b(parseInt("00011", 2)),
-      Fatal: b(parseInt("00001", 2))
+      Trace: b(parseInt("111111", 2)),
+      Debug: b(parseInt("011111", 2)),
+      Info:  b(parseInt("001111", 2)),
+      Warn:  b(parseInt("000111", 2)),
+      Error: b(parseInt("000011", 2)),
+      Fatal: b(parseInt("000001", 2))
     }
   });
 

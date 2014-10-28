@@ -3,6 +3,7 @@
 
 var mod = function(
   _,
+  M,
   Options,
   StateGuard
 ) {
@@ -28,7 +29,7 @@ var mod = function(
       this._elseSuffix      = opts.getOrElse("elseSuffix", "else");
       this._malformedSuffix = opts.getOrElse("malformedSuffix", "malformed");
       this._stateGuard      = new StateGuard(["disposed"]);
-      this._subs            = [];
+      this._subs            = M.hash_map();
 
       var channels = opts.getOrElse("listen", []);
 
@@ -43,9 +44,22 @@ var mod = function(
 
     listen: function(channel) {
       this._stateGuard.deny("disposed");
-      this._subs.push(channel.subscribe(_.bind(function(msg) {
+
+      var sub = channel.subscribe(_.bind(function(msg) {
         this.dispatch(msg);
-      }, this)));
+      }, this));
+
+      this._subs = M.assoc(this._subs, sub.id(), sub);
+
+      return {
+        dispose: _.bind(function(){
+          var nSub = M.get(this._subs, sub.id());
+          if (nSub) {
+            this._subs = M.dissoc(this._subs, sub.id());
+            nSub.dispose();
+          }
+        }, this)
+      }
     },
 
     dispatch: function(mTyped) {
@@ -53,6 +67,49 @@ var mod = function(
         return;
       }
 
+      var handler = this._getVettedHandlerName(mTyped);
+
+      if (handler) {
+        this._delegate[handler](mTyped);
+      }
+    },
+
+    /**
+     * Like `dispatch`, but expects delegate to return a Promise<object>
+     */
+    dispatchAsync: function(mTyped) {
+      if (this._stateGuard.applied("disposed")) {
+        return;
+      }
+
+      var handler = this._getVettedHandlerName(mTyped);
+      if (handler) {
+        return this._delegate[handler](mTyped);
+      }
+    },
+
+    dispose: function() {
+      if (this._stateGuard.applied("disposed")) {
+        return;
+      }
+
+      var subs = this._subs;
+      this._subs = M.hash_map();
+
+      M.each(subs, function(pair) {
+        M.nth(pair, 1).dispose();
+      });
+
+      this._delegate = null;
+
+      this._stateGuard.apply("dispose");
+    },
+
+    _getHandlerName: function(prefix, suffix) {
+      return prefix + suffix.charAt(0).toUpperCase() + suffix.substr(1);
+    },
+
+    _getVettedHandlerName: function(mTyped) {
       var mT = mTyped.mT,
           prefix = this._prefix,
           potentialHandlerName,
@@ -70,25 +127,8 @@ var mod = function(
       }
 
       if (_.isFunction(this._delegate[finalHandlerName])) {
-        this._delegate[finalHandlerName](mTyped);
+        return finalHandlerName;
       }
-    },
-
-    dispose: function() {
-      if (this._stateGuard.applied("disposed")) {
-        return;
-      }
-
-      var subs = this._subs;
-      this._subs = [];
-      _.invoke(subs, "disposed");
-      this._delegate = null;
-
-      this._stateGuard.apply("dispose");
-    },
-
-    _getHandlerName: function(prefix, suffix) {
-      return prefix + suffix.charAt(0).toUpperCase() + suffix.substr(1);
     }
   });
 
@@ -97,6 +137,7 @@ var mod = function(
 
 module.exports = mod(
   require("underscore"),
+  require("mori"),
   require("./options"),
   require("./state-guard")
 );
