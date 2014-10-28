@@ -146,7 +146,7 @@ module.exports = mod(
   require("bluebird"),
   require("../core/options"),
   require("../core/state-guard"),
-  require("../core/channel"),
-  require("../core/chained-channel"),
+  require("../core/channel/channel"),
+  require("../core/channel/chained-channel"),
   require("../core/logging/logger")
 );
