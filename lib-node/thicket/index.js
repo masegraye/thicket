@@ -158,11 +158,6 @@ var mod = function(
     },
 
     {
-      module: require("./reactive/reactor"),
-      as: "reactor"
-    },
-
-    {
       module: require("./core/channel/channel"),
       as: "channel"
     },
