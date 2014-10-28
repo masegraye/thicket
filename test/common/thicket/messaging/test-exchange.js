@@ -5,6 +5,7 @@ var assert         = require("assert"),
     thicket        = require("../../../../lib-node/thicket"),
     Exchange       = thicket.c("messaging/exchange"),
     InMemoryFiber  = thicket.c("messaging/fibers/in-memory"),
+    LinkableFiber  = thicket.c("messaging/fibers/linkable"),
     CountdownLatch = thicket.c("countdown-latch"),
     Logger         = thicket.c("logger");
 
@@ -139,5 +140,40 @@ describe("Exchange", function() {
       .lastly(function(){
         latch.step();
       });
+  });
+
+  it("should dispatch between two exchanges bound by two linked fibers", function(done) {
+    var fiber1 = new LinkableFiber(),
+        fiber2 = new LinkableFiber(),
+        exchange1 = new Exchange({ fiber: fiber1 }),
+        exchange2 = new Exchange({ fiber: fiber2 }),
+        mail1 = exchange1.mailbox("one"),
+        mail2 = exchange2.mailbox("two"),
+        latch = new CountdownLatch(2, done);
+
+    fiber1.listen(fiber2.egressChannel());
+    fiber2.listen(fiber1.egressChannel());
+
+    mail2.requestReplyChannel().subscribe(function(env) {
+      assert.equal(env.body.foo, "foo");
+      latch.step();
+      mail2.reply(env.msgId, {
+        to: env.from,
+        body: { bar: "bar" }
+      });
+    })
+
+    mail1
+      .sendAndReceive({
+        to: "two",
+        body: { foo: "foo" }
+      })
+      .then(function(env) {
+        assert.equal(env.body.bar, "bar");
+      })
+      .lastly(function() {
+        latch.step();
+      });
+
   });
 });

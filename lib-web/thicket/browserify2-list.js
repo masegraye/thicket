@@ -32,6 +32,7 @@ require("./index.js");
 require("./messaging/courier.js");
 require("./messaging/exchange.js");
 require("./messaging/fiber/in-memory-fiber.js");
+require("./messaging/fiber/linkable-fiber.js");
 require("./messaging/internals/mailbox.js");
 require("./node.js");
 require("./reactive/filter-transform.js");

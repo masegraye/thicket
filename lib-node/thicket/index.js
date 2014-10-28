@@ -193,6 +193,11 @@ var mod = function(
     },
 
     {
+      module: require("./messaging/fiber/linkable-fiber"),
+      as: "messaging/fibers/linkable"
+    },
+
+    {
       module: require("./core/uuid"),
       as: "uuid"
     }

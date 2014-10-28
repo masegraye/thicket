@@ -30,10 +30,21 @@ var mod = function(
         _.bindAll(this, "_receive");
       },
 
+
+      id: function() {
+        return this._identity;
+      },
+
+
       dispose: function() {
         if (this._stateGuard.applied("disposed")) {
           return;
         }
+        this._dispose();
+        this._stateGuard.apply("disposed");
+      },
+
+      _dispose: function() {
 
         var entities = this._entities;
         M.each(entities, function(pair) {
@@ -41,7 +52,6 @@ var mod = function(
         });
 
         this._entities = null;
-        this._stateGuard.apply("disposed");
       },
 
       registerEntity: function(opts) {
