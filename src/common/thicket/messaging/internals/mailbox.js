@@ -3,11 +3,13 @@
 
 var mod = function(
   _,
+  Promise,
   Options,
   UUID,
   ChainedChannel,
   Channel,
-  CompositeChannel
+  CompositeChannel,
+  StateGuard
 ) {
 
 
@@ -27,6 +29,7 @@ var mod = function(
         sentinel: this,
         listen: [this._oneShotChannel, this._requestReplyChannel]
       });
+      this._stateGuard            = new StateGuard(["disposed"]);
     },
 
     id: function() {
@@ -35,6 +38,22 @@ var mod = function(
 
     ownerIdentity: function() {
       return this._ownerIdentity;
+    },
+
+    dispose: function() {
+      if (this._stateGuard.applied("disposed")){
+        return;
+      }
+
+      this._oneShotChannel.dispose();
+      this._requestReplyChannel.dispose();
+      this._ingressChannel.dispose();
+
+      this._oneShotChannel      = null;
+      this._requestReplyChannel = null;
+      this._ingressChannel      = null;
+
+      this._stateGuard.apply("disposed");
     },
 
     /**
@@ -54,29 +73,35 @@ var mod = function(
       return this._requestReplyChannel;
     },
 
-    send: function(env) {
+    send: Promise.method(function(env) {
+      this._stateGuard.deny("disposed");
+
       env = _.extend({}, env || {}, {
         from: this._ownerIdentity
       });
       return this._exchange.send(env);
-    },
+    }),
 
-    reply: function(msgId, env) {
+    reply: Promise.method(function(msgId, env) {
+      this._stateGuard.deny("disposed");
+
       env = _.extend({}, env || {}, {
         rMsgId: msgId,
         from: this._ownerIdentity
       });
 
       return this._exchange.reply(env);
-    },
+    }),
 
-    sendAndReceive: function(env, opts) {
+    sendAndReceive: Promise.method(function(env, opts) {
+      this._stateGuard.deny("disposed");
+
       env = _.extend({}, env || {}, {
         from: this._ownerIdentity
       });
 
       return this._exchange.sendAndReceive(env, opts);
-    },
+    }),
 
     _receiveOneShot: function(msg) {
       this._oneShotChannel.publish(this, msg);
@@ -92,9 +117,11 @@ var mod = function(
 
 module.exports = mod(
   require("underscore"),
+  require("bluebird"),
   require("../../core/options"),
   require("../../core/uuid"),
   require("../../core/channel/chained-channel"),
   require("../../core/channel/channel"),
-  require("../../core/channel/composite-channel")
+  require("../../core/channel/composite-channel"),
+  require("../../core/state-guard")
 );

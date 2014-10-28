@@ -188,6 +188,11 @@ var mod = function(
     },
 
     {
+      module: require("./messaging/fiber/in-memory-fiber"),
+      as: "messaging/fibers/in-memory"
+    },
+
+    {
       module: require("./core/uuid"),
       as: "uuid"
     }

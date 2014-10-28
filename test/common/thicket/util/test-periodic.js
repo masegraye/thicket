@@ -37,7 +37,7 @@ describe("Periodic", function() {
         }, this));
         periodic.start();
       })
-      .delay(22)
+      .delay(25)
       .then(function() {
         periodic.stop();
         this.actualCount = this.actualResults.length;

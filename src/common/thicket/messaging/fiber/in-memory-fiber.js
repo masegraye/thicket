@@ -7,6 +7,7 @@ var mod = function(
   M,
   Options,
   UUID,
+  StateGuard,
   Logger
 ) {
 
@@ -24,7 +25,23 @@ var mod = function(
         this._entities = M.hash_map();
         this._identity = opts.getOrElse("identity", UUID.v4());
 
+        this._stateGuard = new StateGuard(["disposed"]);
+
         _.bindAll(this, "_receive");
+      },
+
+      dispose: function() {
+        if (this._stateGuard.applied("disposed")) {
+          return;
+        }
+
+        var entities = this._entities;
+        M.each(entities, function(pair) {
+          M.nth(pair, 1).dispose();
+        });
+
+        this._entities = null;
+        this._stateGuard.apply("disposed");
       },
 
       registerEntity: function(opts) {
@@ -41,12 +58,14 @@ var mod = function(
       },
 
       /**
-       * Returns a promise which is fulfiled when the message is
+       * Returns a promise which is fulfilled when the message is
        * sent, not received by the remote end. This to let the
        * caller know whether or not the message is stuck
        * in a buffer somewhere when calculating its timeouts.
        */
       send: Promise.method(function(opts) {
+        this._stateGuard.deny("disposed");
+
         opts = Options.fromObject(opts);
         var from   = opts.getOrError("from"),
             to     = opts.getOrError("to"),
@@ -78,6 +97,10 @@ var mod = function(
       }),
 
       _receive: function(env) {
+        if (this._stateGuard.applied("disposed")) {
+          return;
+        }
+
         env = Options.fromObject(env);
         var to, from, body, msgId, originFiber, mT, rMsgId;
 
@@ -128,8 +151,20 @@ var mod = function(
 
       this._identity = opts.getOrError("identity");
       this._delegate = opts.getOrError("delegate");
+      this._stateGuard = new StateGuard(["disposed"]);
+    },
+    dispose: function() {
+      if (this._stateGuard.applied("disposed")) {
+        return;
+      }
+
+      this._delegate = null;
+
+      this._stateGuard.apply("disposed");
     },
     dispatch: function(env) {
+      this._stateGuard.deny("disposed");
+
       this._delegate.receiveFiberMessage(env);
     }
   });
@@ -143,5 +178,6 @@ module.exports = mod(
   require("mori"),
   require("../../core/options"),
   require("../../core/uuid"),
+  require("../../core/state-guard"),
   require("../../core/logging/logger")
 );

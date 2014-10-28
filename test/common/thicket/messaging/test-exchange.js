@@ -4,6 +4,7 @@ var assert         = require("assert"),
     Promise        = require("bluebird"),
     thicket        = require("../../../../lib-node/thicket"),
     Exchange       = thicket.c("messaging/exchange"),
+    InMemoryFiber  = thicket.c("messaging/fibers/in-memory"),
     CountdownLatch = thicket.c("countdown-latch"),
     Logger         = thicket.c("logger");
 
@@ -22,7 +23,12 @@ describe("Exchange", function() {
         mail1        = exchange.mailbox("one"),
         mail2        = exchange.mailbox("two"),
         receiveCount = 0,
-        doneLatch    = new CountdownLatch(1, done);
+        doneLatch    = new CountdownLatch(1, function() {
+          exchange.dispose();
+
+
+          done();
+        });
 
     assert.ok(mail1);
     assert.ok(mail2);
@@ -102,6 +108,36 @@ describe("Exchange", function() {
         assert.ok(this.err);
         assert.ok(!this.result);
         done();
+      });
+  });
+
+  it("should route messages between exchanges if they share the same fiber", function(done) {
+    var fiber = new InMemoryFiber(),
+        exchange1 = new Exchange({ fiber: fiber }),
+        exchange2 = new Exchange({ fiber: fiber }),
+        mail1 = exchange1.mailbox("one"),
+        mail2 = exchange2.mailbox("two"),
+        latch = new CountdownLatch(2, done);
+
+    mail2.requestReplyChannel().subscribe(function(env) {
+      assert.equal(env.body.foo, "foo");
+      latch.step();
+      mail2.reply(env.msgId, {
+        to: env.from,
+        body: { bar: "bar" }
+      });
+    })
+
+    mail1
+      .sendAndReceive({
+        to: "two",
+        body: { foo: "foo" }
+      })
+      .then(function(env) {
+        assert.equal(env.body.bar, "bar");
+      })
+      .lastly(function(){
+        latch.step();
       });
   });
 });

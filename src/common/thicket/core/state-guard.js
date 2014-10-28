@@ -20,6 +20,26 @@ var mod = function(
       this._appliedStates = {};
     },
 
+    scope: function(state) {
+      var skip = ["scope", "initialize"],
+          self = this,
+          scoped = {};
+
+      _.each(StateGuard.prototype, function(fun, methodName) {
+        if (_.contains(skip, methodName)) {
+          return;
+        }
+
+        scoped[methodName] = function() {
+          var args = _.toArray(arguments);
+          args.unshift(state);
+          return fun.apply(self, args);
+        };
+      });
+
+      return scoped;
+    },
+
     apply: function() {
       var states = aryOrVariadicToArray(arguments);
       checkValidStatesOrThrow(this._validStates, states);
