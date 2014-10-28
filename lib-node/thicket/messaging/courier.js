@@ -3,11 +3,13 @@
 
 var mod = function(
   _,
+  Promise,
   M,
   Options,
   UUID,
   StateGuard,
-  Logger
+  Logger,
+  Dispatcher
 ) {
 
   var Courier = function() {
@@ -24,7 +26,6 @@ var mod = function(
 
       this._id         = UUID.v4();
       this._delegate   = opts.getOrError("delegate");
-      this._courier    = opts.getOrError("courier");
       this._mailbox    = opts.getOrError("mailbox");
       this._stateGuard = new StateGuard(["disposed"]);
 
@@ -51,14 +52,18 @@ var mod = function(
       return this._id;
     },
 
-    send: function(to, msg) {
+    send: Promise.method(function(to, msg) {
+      this._stateGuard.deny("disposed");
+
       return this._mailbox.send({
         to: to,
         body: msg
       });
-    },
+    }),
 
-    sendAndReceive: function(to, msg) {
+    sendAndReceive: Promise.method(function(to, msg) {
+      this._stateGuard.deny("disposed");
+
       return this._mailbox
         .sendAndReceive({
           to: to,
@@ -74,11 +79,11 @@ var mod = function(
             return res.body.res;
           } else {
             // Someone is misbehaving
-            Log.warn("Received sendAndReceive reply, but it isn't Courier-compatible", res);
+            Log.warn("Received sendAndReceive reply, but it isn't Courier-compatible", this._mailbox.ownerIdentity(), res);
             return res;
           }
         })
-    },
+    }),
 
     dispose: function() {
       if (this._stateGuard.applied("disposed")) {
@@ -139,9 +144,11 @@ var mod = function(
 
 module.exports = mod(
   require("underscore"),
+  require("bluebird"),
   require("mori"),
   require("../core/options"),
   require("../core/uuid"),
   require("../core/state-guard"),
-  require("../core/logging/logger")
+  require("../core/logging/logger"),
+  require("../core/dispatcher")
 );

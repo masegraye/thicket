@@ -116,8 +116,8 @@ var mod = function(
       this._assertUniqueOwner(requesterIdentity);
 
       var mailbox = new Mailbox({
-        identity: requesterIdentity,
-        exchange: this
+        exchange:      this,
+        ownerIdentity: requesterIdentity
       });
 
       this._mailboxes = M.assoc(this._mailboxes, requesterIdentity, mailbox);

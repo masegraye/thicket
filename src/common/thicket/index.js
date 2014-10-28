@@ -183,6 +183,11 @@ var mod = function(
     },
 
     {
+      module: require("./messaging/courier"),
+      as: "messaging/courier"
+    },
+
+    {
       module: require("./core/uuid"),
       as: "uuid"
     }

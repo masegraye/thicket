@@ -2,12 +2,10 @@
 
 var assert         = require("assert"),
     Promise        = require("bluebird"),
-    _              = require("underscore"),
     thicket        = require("../../../../lib-node/thicket"),
     Exchange       = thicket.c("messaging/exchange"),
     CountdownLatch = thicket.c("countdown-latch"),
-    Logger         = thicket.c("logger"),
-    CLA            = thicket.c("appenders/console-log");
+    Logger         = thicket.c("logger");
 
 describe("Exchange", function() {
 

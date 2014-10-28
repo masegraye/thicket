@@ -4,6 +4,7 @@
 var mod = function(
   _,
   Options,
+  UUID,
   ChainedChannel,
   Channel,
   CompositeChannel
@@ -17,16 +18,23 @@ var mod = function(
   _.extend(Mailbox.prototype, {
     initialize: function(opts) {
       opts = Options.fromObject(opts);
-      this._ownerIdentity  = opts.getOrError("identity");
-      this._exchange       = opts.getOrError("exchange");
-
+      this._id                    = UUID.v4();
+      this._ownerIdentity         = opts.getOrError("ownerIdentity");
+      this._exchange              = opts.getOrError("exchange");
       this._oneShotChannel        = new Channel({ sentinel: this });
       this._requestReplyChannel   = new Channel({ sentinel: this });
-
-      this._ingressChannel = new CompositeChannel({
+      this._ingressChannel        = new CompositeChannel({
         sentinel: this,
         listen: [this._oneShotChannel, this._requestReplyChannel]
       });
+    },
+
+    id: function() {
+      return this._id;
+    },
+
+    ownerIdentity: function() {
+      return this._ownerIdentity;
     },
 
     /**
@@ -85,6 +93,7 @@ var mod = function(
 module.exports = mod(
   require("underscore"),
   require("../../core/options"),
+  require("../../core/uuid"),
   require("../../core/channel/chained-channel"),
   require("../../core/channel/channel"),
   require("../../core/channel/composite-channel")
