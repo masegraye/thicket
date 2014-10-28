@@ -73,4 +73,28 @@ describe("StateGuard", function() {
         done();
       });
   });
+
+  it("should support scoped guards", function() {
+    var guard = (new StateGuard(["one"])).scope("one");
+
+    assert.throws(function() {
+      guard.ensure();
+    });
+
+    guard.deny();
+    guard.apply();
+
+    assert.throws(function() {
+      guard.deny();
+    });
+
+    guard.unapply();
+
+    assert.throws(function() {
+      guard.ensure();
+    });
+
+    guard.deny();
+
+  });
 });
