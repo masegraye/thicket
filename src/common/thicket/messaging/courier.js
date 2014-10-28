@@ -16,7 +16,7 @@ var mod = function(
     this.initialize.apply(this, arguments);
   };
 
-  var MSG_REPLY = Courier.MSG_REPLY = "reply";
+  var MSG_REPLY = Courier.MSG_REPLY = "cReply";
 
   var Log = Logger.create("Courier");
 
@@ -71,12 +71,12 @@ var mod = function(
         })
         .then(function(res) {
 
-          if (res.mT === MSG_REPLY) {
+          if (res.body && res.body.mT === MSG_REPLY && res.body.body) {
             // Unwrap the remote message
-            if (res.body.err) {
-              throw new Error(res.body.err);
+            if (res.body.body.err) {
+              throw new Error(res.body.body.err);
             }
-            return res.body.res;
+            return res.body.body.res;
           } else {
             // Someone is misbehaving
             Log.warn("Received sendAndReceive reply, but it isn't Courier-compatible", this._mailbox.ownerIdentity(), res);
