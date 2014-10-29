@@ -22,6 +22,12 @@ var mod = function(
       this._subscriptions = M.hash_map();
     },
 
+    reset: function() {
+      M.each(this._subscriptions, function(pair) {
+        M.nth(pair, 1).dispose();
+      });
+      this._subscriptions = M.hash_map();
+    },
 
     publish: function(sentinel, msg) {
       return this._publish.apply(this, arguments);
@@ -76,6 +82,8 @@ var mod = function(
       M.each(this._subscriptions, function(pair) {
         M.nth(pair, 1).dispose();
       });
+
+      this._subscriptions = M.hash_map();
 
       this._stateGuard.apply("disposed");
     },

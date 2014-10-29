@@ -135,6 +135,8 @@ var mod = function(
 
       this._cancelPending();
       this._cancelOutstanding();
+
+      this._stateGuard.apply("disposed");
     }
   });
 
