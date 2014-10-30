@@ -22,6 +22,9 @@ var mod = function(
 
     isExpired: function(sequence, fallbackTtl) {
       var ttl = this._ttl || fallbackTtl;
+      if (!ttl) {
+        throw new Error("No TTL specified!");
+      }
       // E.g., lastSequence = 4, ttl = 1, sequence = 5: expired
       //       lastSequence = 4, ttl = 1, sequence = 4: not expired
       //       lastSequence = 4, ttl = 2, sequence = 5: not expired

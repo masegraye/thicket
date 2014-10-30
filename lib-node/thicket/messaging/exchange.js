@@ -18,7 +18,7 @@ var mod = function(
   ClockSequencer,
   SystemClock,
   Runtime
-) {
+  ) {
 
   var Exchange = function() {
     this.initialize.apply(this, arguments);
@@ -27,6 +27,9 @@ var mod = function(
   var MSG_SEND             = Exchange.MSG_SEND             = "send",
       MSG_SEND_AND_RECEIVE = Exchange.MSG_SEND_AND_RECEIVE = "sendAndReceive",
       MSG_REPLY            = Exchange.MSG_REPLY            = "reply";
+
+  // 7.5 seconds is reasonable, yes?
+  var DEFAULT_REPLY_TIMEOUT = 7500;
 
   var Log = Logger.create("Exchange");
 
@@ -61,13 +64,21 @@ var mod = function(
         prefix: "_onMbx"
       });
 
+      var usedDefaultClock = false;
       // Data store for pending requests
       this._outstandingRequests = new SignalingDataStore({
-        ttl: opts.getOrElse("replyTimeout", 10000),
+        ttl: opts.getOrElse("replyTimeout", DEFAULT_REPLY_TIMEOUT),
         sequencer: new ClockSequencer({
           clock: opts.getOrElseFn("clock", function() {
+            usedDefaultClock = true;
             return new SystemClock();
-          })
+          }),
+          // Hax - Since we want time to be async, but provide a default system clock
+          // we need to get the initial clock sequence sync, by bypassing the clock call.
+          // If you provide an async clock, you should either provide an initial time, or
+          // ensure that the first getTime has resolved before instantiating the exchange.
+          // OR, in the future, we have to add a start()/stop() to Exchange.
+          initialSequence: opts.getOrElse("initialSequence", (usedDefaultClock ? +new Date() : undefined))
         })
       });
 
