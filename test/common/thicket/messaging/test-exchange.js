@@ -184,12 +184,12 @@ describe("Exchange", function() {
     var exchange = new Exchange({
           replyTimeout: 10000
         }),
-        mail1 = exchange.mailbox("one"),
-        mail2 = exchange.mailbox("two"),
-        reqId = "FOO_REQ",
-        replyReceived = false,
+        mail1          = exchange.mailbox("one"),
+        mail2          = exchange.mailbox("two"),
+        reqId          = "FOO_REQ",
+        replyReceived  = false,
         cancelReceived = false,
-        cancelLatch = new CountdownLatch(1, function() {
+        cancelLatch    = new CountdownLatch(1, function() {
           mail1.cancelSendAndReceive(reqId);
         });
 
@@ -218,6 +218,39 @@ describe("Exchange", function() {
         done();
       });
   });
+
+  it("should cancel mailbox requests when a mailbox is disposed", function(done) {
+    var exchange = new Exchange({
+          replyTimeout: 10000
+        }),
+        replyReceived = null,
+        cancelReceived = null,
+        mail1 = exchange.mailbox("one"),
+        mail2 = exchange.mailbox("two");
+
+    mail2.ingressChannel().subscribe(function() {
+      mail1.dispose();
+    });
+
+    mail1
+      .sendAndReceive({
+        to: "two",
+        body: { foo: "foo" }
+      })
+      .then(function(reply) {
+        replyReceived = reply;
+      })
+      .caught(Promise.CancellationError, function(err) {
+        cancelReceived = err;
+      })
+      .lastly(function() {
+        assert.ok(!replyReceived, "no reply");
+        assert.ok(cancelReceived);
+        assert.equal(mail1.outstandingRequestCount(), 0, "no pending requests");
+        done();
+      });
+
+  })
 
 });
 

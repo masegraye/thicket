@@ -144,6 +144,12 @@ var mod = function(
         });
     }),
 
+
+    outstandingRequestCount: function() {
+      return M.count(this._outstandingRequestIds);
+    },
+
+
     cancelSendAndReceive: Promise.method(function(reqId) {
       return this._exchange
         .cancelSendAndReceive(reqId)

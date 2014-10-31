@@ -28,13 +28,15 @@ var mod = function(
         this.listen(c);
       }, this));
     },
+
+
     dispose: function() {
       Channel.prototype.dispose.apply(this, arguments);
       var forwarding = this._forwarding;
       this._forwarding = M.hash_map();
 
       M.each(forwarding, _.bind(function(pair) {
-        M.nth(this._forwarding, 1).dispose();
+        M.nth(pair, 1).dispose();
       }, this));
     },
 
@@ -52,6 +54,7 @@ var mod = function(
         }, this)
       };
     },
+
 
     _forward: function(msg) {
       this.publish(this._sentinel, msg);
