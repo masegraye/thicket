@@ -100,7 +100,15 @@ var mod = function(
         from: this._ownerIdentity
       });
 
+      opts = _.extend({}, {
+        reqId: UUID.v4()
+      }, opts || {});
+
       return this._exchange.sendAndReceive(env, opts);
+    }),
+
+    cancelSendAndReceive: Promise.method(function(reqId) {
+      return this._exchange.cancelSendAndReceive(reqId);
     }),
 
     _receiveOneShot: function(msg) {

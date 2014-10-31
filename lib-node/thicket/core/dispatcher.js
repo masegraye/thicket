@@ -102,7 +102,7 @@ var mod = function(
 
       this._delegate = null;
 
-      this._stateGuard.apply("dispose");
+      this._stateGuard.apply("disposed");
     },
 
     _getHandlerName: function(prefix, suffix) {

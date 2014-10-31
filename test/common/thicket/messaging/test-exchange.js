@@ -1,6 +1,7 @@
 "use strict";
 
 var assert         = require("assert"),
+    _              = require("underscore"),
     Promise        = require("bluebird"),
     thicket        = require("../../../../lib-node/thicket"),
     Exchange       = thicket.c("messaging/exchange"),
@@ -176,4 +177,46 @@ describe("Exchange", function() {
       });
 
   });
+
+  it("should allow request cancellation", function(done) {
+    var exchange = new Exchange({
+          replyTimeout: 10000
+        }),
+        mail1 = exchange.mailbox("one"),
+        mail2 = exchange.mailbox("two"),
+        reqId = "FOO_REQ",
+        replyReceived = false,
+        cancelReceived = false,
+        cancelLatch = new CountdownLatch(1, function() {
+          mail1.cancelSendAndReceive(reqId);
+        });
+
+    mail2.requestReplyChannel().subscribe(function(env) {
+      assert.equal(env.body.foo, "foo");
+      // Trigger cancellation!
+      _.defer(function() {
+        cancelLatch.step();
+      });
+    });
+
+    mail1
+      .sendAndReceive({
+        to: "two",
+        body: { foo: "foo" }
+      }, { reqId: reqId })
+      .then(function(reply) {
+        replyReceived = true;
+      })
+      .caught(Promise.CancellationError, function() {
+        cancelReceived = true;
+      })
+      .lastly(function() {
+        assert.ok(!replyReceived, "received no reply, as expected");
+        assert.ok(cancelReceived, "received cancel, as expected");
+        done();
+      });
+  });
+
 });
+
+

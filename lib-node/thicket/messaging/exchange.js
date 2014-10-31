@@ -65,6 +65,11 @@ var mod = function(
       });
 
       var usedDefaultClock = false;
+
+      // For requester-provided requestId to messageId mapping.
+      // Used for cancelling outstanding sendAndReceive requests.
+      this._reqToMsg = M.hash_map();
+
       // Data store for pending requests
       this._outstandingRequests = new SignalingDataStore({
         ttl: opts.getOrElse("replyTimeout", DEFAULT_REPLY_TIMEOUT),
@@ -110,8 +115,12 @@ var mod = function(
     dispose: function() {
       // TODO: Cancel outstanding requests
 
+      this._expiryDispatcher.dispose();
+
+      this._outstandingRequests.clear();
+
       // TODO: Dispose all the things
-      this._checkExpiry.stop();
+      this._checkExpiry.dispose();
     },
 
 
@@ -173,18 +182,22 @@ var mod = function(
       opts = Options.fromObject(opts);
 
       var msgId = UUID.v4(),
+          reqId    = opts.getOrError("reqId"),
           deferred = defer(),
-          fibEnv = {
+          fibEnv   = {
             from:  env.getOrError("from"),
             to:    env.getOrError("to"),
             body:  env.getOrError("body"),
             mT:    MSG_SEND_AND_RECEIVE,
             msgId: msgId
           },
-          req = {
+          req      = {
+            reqId:    reqId,
             deferred: deferred,
             fibEnv:   fibEnv
           };
+
+      this._reqToMsg = M.assoc(this._reqToMsg, reqId, msgId);
 
       return this
         ._outstandingRequests
@@ -197,6 +210,28 @@ var mod = function(
           return req.deferred.promise;
         });
     },
+
+    cancelSendAndReceive: Promise.method(function(reqId) {
+      var msgId = M.get(this._reqToMsg, reqId);
+
+      if (msgId) {
+        Log.debug("Canceling request", reqId, "with msgId", msgId);
+        this._reqToMsg = M.dissoc(this._reqToMsg, reqId);
+
+        return Promise
+          .bind(this)
+          .then(function() {
+            return this._outstandingRequests.remove(msgId);
+          })
+          .then(function(req) {
+            if (req) {
+              req.deferred.reject(new Promise.CancellationError());
+            }
+          })
+      } else {
+        Log.warn("Tried to cancel request, but no oustanding request with that ID found;", reqId);
+      }
+    }),
 
 
     _assertUniqueOwner: function(identity) {
@@ -257,6 +292,8 @@ var mod = function(
       var oEnv     = Options.fromObject(env),
           rMsgId   = oEnv.getOrElse("rMsgId");
 
+
+
       // Don't dispatch vetted replies. Just fulfill the promise
       Promise
         .bind(this)
@@ -265,6 +302,7 @@ var mod = function(
         })
         .then(function(request) {
           if (request) {
+            this._reqToMsg = M.dissoc(this._reqToMsg, request.reqId);
             request.deferred.resolve(env);
           }
         });
@@ -283,6 +321,7 @@ var mod = function(
         })
         .then(function(request) {
           if (request) {
+            this._reqToMsg = M.dissoc(this._reqToMsg, request.reqId);
             request.deferred.reject(new Promise.TimeoutError());
           }
         });
