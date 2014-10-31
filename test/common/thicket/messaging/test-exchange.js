@@ -1,3 +1,5 @@
+/*global require: false, describe: false, it: false */
+
 "use strict";
 
 var assert         = require("assert"),

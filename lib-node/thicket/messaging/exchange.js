@@ -129,6 +129,9 @@ var mod = function(
      * `RequesterIdentity` must never have been used for requesting
      * a mailbox previously.
      *
+     * We attempt to validate unique mailbox names, but because mailbox names
+     * are global and there is no checking between fibers, it's only a best-effort.
+     *
      * @param requesterIdentity
      * @returns {Mailbox}
      */

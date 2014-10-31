@@ -4,6 +4,7 @@
 var mod = function(
   _,
   Promise,
+  M,
   Options,
   UUID,
   ChainedChannel,
@@ -30,6 +31,8 @@ var mod = function(
         listen: [this._oneShotChannel, this._requestReplyChannel]
       });
       this._stateGuard            = new StateGuard(["disposed"]);
+
+      this._outstandingRequestIds = M.set();
     },
 
     id: function() {
@@ -48,6 +51,22 @@ var mod = function(
       this._oneShotChannel.dispose();
       this._requestReplyChannel.dispose();
       this._ingressChannel.dispose();
+
+      // Attempt to cancel all outstanding requests.
+      // This is an async request, so we just have to fire and
+      // forge them.
+      //
+      // If you're disposing of a mailbox before requests
+      // complete, you might have a bad time. The good
+      // news is because responses are ferried back from the fiber
+      // to the mailbox caller via the Promise interface rather
+      // than channels, they should still get CancellationErrors
+      var reqs = this._outstandingRequestIds;
+      this._outstandingRequestIds = M.set();
+
+      M.each(reqs, _.bind(function(reqId) {
+        this._exchange.cancelSendAndReceive(reqId);
+      }, this));
 
       this._oneShotChannel      = null;
       this._requestReplyChannel = null;
@@ -96,19 +115,42 @@ var mod = function(
     sendAndReceive: Promise.method(function(env, opts) {
       this._stateGuard.deny("disposed");
 
+      var reqId = (opts || {}).reqId || UUID.v4();
+
       env = _.extend({}, env || {}, {
         from: this._ownerIdentity
       });
 
-      opts = _.extend({}, {
-        reqId: UUID.v4()
-      }, opts || {});
+      opts = _.extend({}, opts || {}, {
+        reqId: reqId
+      });
 
-      return this._exchange.sendAndReceive(env, opts);
+      this._outstandingRequestIds = M.conj(this._outstandingRequestIds, reqId);
+
+      return this._exchange
+        .sendAndReceive(env, opts)
+        .bind(this)
+        .then(function(resp) {
+          this._outstandingRequestIds = M.disj(this._outstandingRequestIds, reqId);
+          return resp;
+        })
+        .caught(Promise.CancellationError, function(err) {
+          this._outstandingRequestIds = M.disj(this._outstandingRequestIds, reqId);
+          throw err;
+        })
+        .caught(Promise.TimeoutError, function(err) {
+          this._outstandingRequestIds = M.disj(this._outstandingRequestIds, reqId);
+          throw err;
+        });
     }),
 
     cancelSendAndReceive: Promise.method(function(reqId) {
-      return this._exchange.cancelSendAndReceive(reqId);
+      return this._exchange
+        .cancelSendAndReceive(reqId)
+        .bind(this)
+        .then(function() {
+          this._outstandingRequestIds = M.disj(this._outstandingRequestIds, reqId);
+        });
     }),
 
     _receiveOneShot: function(msg) {
@@ -126,6 +168,7 @@ var mod = function(
 module.exports = mod(
   require("underscore"),
   require("bluebird"),
+  require("mori"),
   require("../../core/options"),
   require("../../core/uuid"),
   require("../../core/channel/chained-channel"),
