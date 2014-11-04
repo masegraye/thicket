@@ -23,6 +23,25 @@ var factory = function(
       return function() {
         return fun.apply(null, args.concat(arguments));
       };
+    },
+
+    makeErrorClass: function(name, defaultMessage) {
+      if (!name) {
+        throw new Error("makeErrorClass requires `name`");
+      }
+
+      var klass = function(message) {
+        this.name    = name;
+        this.message = this.name + ": " + (message || defaultMessage || "An unexpected error occurred");
+
+        if (Error.captureStackTrace) {
+          Error.captureStackTrace(this, klass);
+        }
+      };
+
+      klass.prototype = Object.create(Error.prototype);
+      klass.prototype.constructor = klass;
+      return klass;
     }
   });
 

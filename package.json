@@ -14,6 +14,7 @@
   "devDependencies": {
     "grunt": "0.4.5",
     "grunt-browserify2": "0.1.8",
+    "grunt-cli": "^0.1.13",
     "grunt-contrib-clean": "^0.6.0",
     "mocha": "^1.21.5"
   },

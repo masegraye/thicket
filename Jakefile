@@ -108,7 +108,7 @@ var writeBrowserify2ListModule = function(js) {
 
 var browserifyWeb = function() {
   return new Promise(function(resolve, reject) {
-    var grunt = spawn("grunt", ["build"], {stdio: 'inherit'});
+    var grunt = spawn("node_modules/.bin/grunt", ["build"], {stdio: 'inherit'});
     grunt.on("close", function() {
       resolve();
     });
