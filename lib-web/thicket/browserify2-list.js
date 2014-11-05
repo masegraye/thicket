@@ -1,6 +1,7 @@
 require("./runtime/default-runtime.js");
 require("./runtime/index.js");
 require("./node.js");
+require("./core/serde/json-serde.js");
 require("./core/uuid.js");
 require("./core/logging/logger.js");
 require("./core/logging/appenders/console-log-appender.js");

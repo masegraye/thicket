@@ -195,6 +195,11 @@ var mod = function(
     {
       module: require("./core/uuid"),
       as: "uuid"
+    },
+
+    {
+      module: require("./core/serde/json-serde"),
+      as: ["serde/json", "json-serde"]
     }
   ]);
 
