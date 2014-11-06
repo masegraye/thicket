@@ -100,9 +100,11 @@ var factory = function(
       }
     },
 
+
     toObject: function() {
       return _.clone(this._providedOpts);
     },
+
 
     _isUndefOrNull: function(key) {
       return typeof this._providedOpts[key] === "undefined" || this._providedOpts[key] === null;

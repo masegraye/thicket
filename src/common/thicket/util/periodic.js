@@ -37,7 +37,7 @@ var mod = function(
         .deny("disposed", "started")
         .apply("started");
 
-      this._scheduleNext();
+      this._scheduleNext(true);
     },
 
 
@@ -101,11 +101,11 @@ var mod = function(
     },
 
 
-    _scheduleNext: function() {
+    _scheduleNext: function(now) {
       if (this._stateGuard.applied("disposed") || !this._stateGuard.applied("started")) {
         return;
       }
-      this._taskId = this._schedulerRef.get().schedule(this._runTask, this._interval);
+      this._taskId = this._schedulerRef.get().schedule(this._runTask, now ? 0 : this._interval);
       Log.trace("Scheduled task", this._taskId);
     },
 
