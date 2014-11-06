@@ -100,6 +100,10 @@ var factory = function(
       }
     },
 
+    toObject: function() {
+      return _.clone(this._providedOpts);
+    },
+
     _isUndefOrNull: function(key) {
       return typeof this._providedOpts[key] === "undefined" || this._providedOpts[key] === null;
     }
@@ -107,6 +111,23 @@ var factory = function(
 
   _.extend(Options, {
     fromObject: function(opts) {
+      return new Options(opts);
+    },
+
+
+    fromObjectWithPrefix: function(opts, prefix) {
+      opts = _.reduce(opts, function(memo, val, key) {
+        var rest, newKey;
+        if (key.indexOf(prefix) === 0) {
+          rest = key.substr(prefix.length);
+          if (rest.length > 1) {
+            newKey = rest.charAt(0).toLowerCase() + rest.substr(1);
+            memo[newKey] = val;
+          }
+        }
+        return memo;
+      }, {});
+
       return new Options(opts);
     }
   })
