@@ -105,6 +105,9 @@ var factory = function(
       return _.clone(this._providedOpts);
     },
 
+    scope: function(prefix) {
+      return Options.fromObjectWithPrefix(this.toObject(), prefix);
+    },
 
     _isUndefOrNull: function(key) {
       return typeof this._providedOpts[key] === "undefined" || this._providedOpts[key] === null;
