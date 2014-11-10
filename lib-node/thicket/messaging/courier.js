@@ -90,14 +90,12 @@ var mod = function(
         return;
       }
 
-      this._courier._disposeHandle(this._id);
 
       M.each(this._subs, function(sub) {
         sub.dispose();
       });
 
       this._subs     = null;
-      this._courier  = null;
       this._mailbox  = null;
       this._delegate = null;
 
