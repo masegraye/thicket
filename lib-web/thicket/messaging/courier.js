@@ -29,16 +29,20 @@ var mod = function(
       this._mailbox    = opts.getOrError("mailbox");
       this._stateGuard = new StateGuard(["disposed"]);
 
-      _.bindAll(this, "_onOneShotMessage", "_onRequestReplyMessage");
+      _.bindAll(this, "_onOneShotMessage", "_onRequestReplyMessage", "_defaultContextDelegate");
+
+      this._contextDelegate = opts.getOrElse("contextDelegate", this._defaultContextDelegate);
 
       this._oneShotDispatcher = new Dispatcher({
         delegate: this._delegate,
-        prefix: opts.getOrElse("oneShotPrefix", "onMsg")
+        prefix: opts.getOrElse("oneShotPrefix", "onMsg"),
+        contextDelegate: this._contextDelegate
       });
 
       this._requestReplyDispatcher = new Dispatcher({
         delegate: this._delegate,
-        prefix: opts.getOrElse("requestReplyPrefix", "onReq")
+        prefix: opts.getOrElse("requestReplyPrefix", "onReq"),
+        contextDelegate: this._contextDelegate
       });
 
       this._subs = M.vector(
@@ -102,6 +106,11 @@ var mod = function(
       this._stateGuard.apply("disposed");
     },
 
+    _defaultContextDelegate: function(mTyped) {
+      return {
+        mailbox: this._mailbox
+      };
+    },
 
     _onOneShotMessage: function(msg) {
       this._oneShotDispatcher.dispatch(msg.body);

@@ -21,6 +21,10 @@ var mod = function(
     this.initialize.apply(this, arguments);
   };
 
+  var DEFAULT_CONTEXT_DELEGATE = function() {
+    return {};
+  };
+
   _.extend(Dispatcher.prototype, {
     initialize: function(opts) {
       opts = Options.fromObject(opts);
@@ -28,6 +32,7 @@ var mod = function(
       this._prefix          = opts.getOrElse("prefix", "onMsg");
       this._elseSuffix      = opts.getOrElse("elseSuffix", "else");
       this._malformedSuffix = opts.getOrElse("malformedSuffix", "malformed");
+      this._contextDelegate = opts.getOrElse("contextDelegate", DEFAULT_CONTEXT_DELEGATE);
       this._stateGuard      = new StateGuard(["disposed"]);
       this._subs            = M.hash_map();
 
@@ -70,7 +75,7 @@ var mod = function(
       var handler = this._getVettedHandlerName(mTyped);
 
       if (handler) {
-        this._delegate[handler](mTyped);
+        this._delegate[handler](mTyped, this._contextDelegate(mTyped));
       }
     },
 
@@ -84,7 +89,7 @@ var mod = function(
 
       var handler = this._getVettedHandlerName(mTyped);
       if (handler) {
-        return this._delegate[handler](mTyped);
+        return this._delegate[handler](mTyped, this._contextDelegate(mTyped));
       }
     },
 
