@@ -33,12 +33,12 @@ var mod = function(
 
       this._oneShotDispatcher = new Dispatcher({
         delegate: this._delegate,
-        prefix: "onMsg"
+        prefix: opts.getOrElse("oneShotPrefix", "onMsg")
       });
 
       this._requestReplyDispatcher = new Dispatcher({
         delegate: this._delegate,
-        prefix: "onReq"
+        prefix: opts.getOrElse("requestReplyPrefix", "onReq")
       });
 
       this._subs = M.vector(
