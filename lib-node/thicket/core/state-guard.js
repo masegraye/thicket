@@ -175,6 +175,12 @@ var mod = function(
     return "["+states.join(",")+"]";
   };
 
+  _.extend(StateGuard, {
+    scoped: function(scope) {
+      return (new StateGuard([scope])).scope(scope);
+    }
+  })
+
   return StateGuard;
 };
 

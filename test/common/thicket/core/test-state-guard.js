@@ -75,7 +75,8 @@ describe("StateGuard", function() {
   });
 
   it("should support scoped guards", function() {
-    var guard = (new StateGuard(["one"])).scope("one");
+    var guard = (new StateGuard(["one"])).scope("one"),
+        guardTwo = StateGuard.scoped("two");
 
     assert.throws(function() {
       guard.ensure();
@@ -95,6 +96,10 @@ describe("StateGuard", function() {
     });
 
     guard.deny();
+
+    assert.ok(guardTwo);
+    guardTwo.apply();
+    assert.ok(guardTwo.applied());
 
   });
 });
