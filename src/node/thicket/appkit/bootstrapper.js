@@ -2,6 +2,7 @@
 
 var mod = function(
   fs,
+  yaml,
   nopt,
   _,
   Promise,
@@ -40,7 +41,7 @@ var mod = function(
         return f
           .readFileAsync(configFile)
           .then(function(contents) {
-            return JSON.parse(contents);
+            return yaml.safeLoad(contents);
           });
       });
 
@@ -72,6 +73,7 @@ var mod = function(
 
 module.exports = mod(
   require("fs"),
+  require("js-yaml"),
   require("nopt"),
   require("underscore"),
   require("bluebird"),
