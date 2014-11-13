@@ -6,6 +6,78 @@ var mod = function(
   Promise
 ) {
 
+  /**
+   * A StateGuard does what its name implies. Valid states are provided during instantiation, and are applied, ensured,
+   * denied, etc, through the course of the owner's lifetime.
+   *
+   * For example, if you'd like to ensure that Foo#bar raises an error after Foo#dispose is called, you might do the
+   * following:
+   *
+   *   var Foo = function() {
+   *     this.initialize.apply(this, arguments);
+   *   };
+   *
+   *   _.extend(Foo.prototype, {
+   *     initialize: function() {
+   *       this._expensiveResource = new ExpensiveResource();
+   *       this._stateGuard = new StateGuard(["disposed"]);
+   *     },
+   *     dispose: function() {
+   *       // #dispose should be idempotent, so here we just check to see if we've already disposed, and return.
+   *       // Note that if dispose were async, we'd need to add a "disposing" state.
+   *       if (this._stateGuard.applied("disposed")) {
+   *         return;
+   *       }
+   *
+   *       if (this._expensiveResource) {
+   *         this._expensiveResource.dispose();
+   *         this._expensiveResource = null;
+   *       }
+   *       this._stateGuard.apply("disposed");
+   *     },
+   *     bar: function() {
+   *       this._stateGuard.deny("disposed"); // Throws exception if #dispose was called
+   *
+   *       return this._expensiveResource.someMethod();
+   *     }
+   *   });
+   *
+   * In this case, where we have only one state, it's useful to simply create a scoped StateGuard, which behaves
+   * identically to a regular one, except every enforcement/query method has the scope provided during instantiation
+   * as a first, implicit argument:
+   *
+   *   // Identical to previous version.
+   *
+   *   var Foo = function() {
+   *     this.initialize.apply(this, arguments);
+   *   };
+   *
+   *   _.extend(Foo.prototype, {
+   *     initialize: function() {
+   *       this._expensiveResource = new ExpensiveResource();
+   *       this._stateGuard = StateGuard.scoped("disposed");
+   *     },
+   *     dispose: function() {
+   *       // #dispose should be idempotent, so here we just check to see if we've already disposed, and return.
+   *       // Note that if dispose were async, we'd need to add a "disposing" state.
+   *       if (this._stateGuard.applied()) {
+   *         return;
+   *       }
+   *
+   *       if (this._expensiveResource) {
+   *         this._expensiveResource.dispose();
+   *         this._expensiveResource = null;
+   *       }
+   *       this._stateGuard.apply();
+   *     },
+   *     bar: function() {
+   *       this._stateGuard.deny(); // Throws exception if #dispose was called
+   *
+   *       return this._expensiveResource.someMethod();
+   *     }
+   *   });
+   *
+   */
   var StateGuard = function() {
     this.initialize.apply(this, arguments);
   };
