@@ -47,7 +47,7 @@ var factory = function(
 
     pojoClass: function(attributes, options) {
       if (!_.isArray(attributes)) {
-        throw new Error("Lang#pojo requires attributes array");
+        throw new Error("Lang#pojoClass requires attributes array");
       }
 
       var options = Options.fromObject(options),
