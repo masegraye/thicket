@@ -61,6 +61,8 @@ describe("Lang", function() {
 
       assert.equal(instance.foo(), "foo");
       assert.equal(instance.bar(), "BAZ");
+
+      assert.ok(instance instanceof MyKlass);
     });
   });
 });
