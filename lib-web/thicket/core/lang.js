@@ -2,7 +2,8 @@
 "use strict";
 
 var factory = function(
-  _
+  _,
+  Options
 ) {
 
   var Lang = function() {
@@ -42,6 +43,55 @@ var factory = function(
       klass.prototype = Object.create(Error.prototype);
       klass.prototype.constructor = klass;
       return klass;
+    },
+
+    pojo: function(attributes, options) {
+      if (!_.isArray(attributes)) {
+        throw new Error("Lang#pojo requires attributes array");
+      }
+
+      var options = Options.fromObject(options),
+          // optional specifies keys that are optional, with values that are default if not provided
+          defaults = options.getOrElse("defaults", {}),
+          optionalAttributes = _.keys(defaults);
+
+      var toAttributeName = function(attr) {
+            return "_" + attr;
+          },
+          toGetter = function(attr) {
+            return attr;
+          },
+          toSetter = function(attr) {
+            return "set" + attr.charAt(0).toUpperCase() + attr.substr(1);
+          };
+
+      var klass = function() {
+        this.initialize.apply(this, arguments);
+      };
+
+      _.extend(klass.prototype, {
+        initialize: function(opts) {
+          opts = Options.fromObject(opts);
+          _.each(attributes, function(attr) {
+            if (_.contains(optionalAttributes, attr)) {
+              this[toAttributeName(attr)] = opts.getOrElse(attr, defaults[attr]);
+            } else {
+              this[toAttributeName(attr)] = opts.getOrError(attr);
+            }
+          }, this);
+        }
+      });
+
+      _.each(attributes, function(attr) {
+        klass.prototype[toGetter(attr)] = function() {
+          return this[toAttributeName(attr)];
+        };
+        klass.prototype[toSetter(attr)] = function(v) {
+          this[toAttributeName(attr)] = v;
+        };
+      });
+
+      return klass;
     }
   });
 
@@ -49,5 +99,6 @@ var factory = function(
 };
 
 module.exports = factory(
-  require("underscore")
+  require("underscore"),
+  require("./options")
 );
