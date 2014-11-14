@@ -45,7 +45,7 @@ var factory = function(
       return klass;
     },
 
-    pojo: function(attributes, options) {
+    pojoClass: function(attributes, options) {
       if (!_.isArray(attributes)) {
         throw new Error("Lang#pojo requires attributes array");
       }

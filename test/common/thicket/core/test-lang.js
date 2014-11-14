@@ -7,7 +7,7 @@ var assert  = require("assert"),
 describe("Lang", function() {
   describe("pojo", function() {
     it("should make a pojo-like thing with all required attributes", function() {
-      var MyKlass = Lang.pojo(["one", "two"]);
+      var MyKlass = Lang.pojoClass(["one", "two"]);
 
       assert.ok(MyKlass);
 
@@ -31,7 +31,7 @@ describe("Lang", function() {
     });
 
     it("should support optional options", function() {
-      var MyKlass = Lang.pojo(["foo", "bar"], {
+      var MyKlass = Lang.pojoClass(["foo", "bar"], {
         defaults: {
           bar: "bar"
         }
