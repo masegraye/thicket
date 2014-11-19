@@ -3,6 +3,7 @@
 
 var factory = function(
   _,
+  Promise,
   Options
 ) {
 
@@ -92,6 +93,21 @@ var factory = function(
       });
 
       return klass;
+    },
+
+    deferred: function(promiseClass) {
+      promiseClass = promiseClass || Promise;
+      var res = null, rej = null;
+      var p = new promiseClass(function() {
+        res = arguments[0];
+        rej = arguments[1];
+      });
+
+      return {
+        promise: p,
+        resolve: res,
+        reject: rej
+      };
     }
   });
 
@@ -100,5 +116,6 @@ var factory = function(
 
 module.exports = factory(
   require("underscore"),
+  require("bluebird"),
   require("./options")
 );
