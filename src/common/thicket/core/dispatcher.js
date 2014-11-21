@@ -67,7 +67,7 @@ var mod = function(
       }
     },
 
-    dispatch: function(mTyped) {
+    dispatch: function(mTyped, ctx) {
       if (this._stateGuard.applied("disposed")) {
         return;
       }
@@ -75,21 +75,21 @@ var mod = function(
       var handler = this._getVettedHandlerName(mTyped);
 
       if (handler) {
-        this._delegate[handler](mTyped, this._contextDelegate(mTyped));
+        this._delegate[handler](mTyped, this._contextDelegate(mTyped, ctx));
       }
     },
 
     /**
      * Like `dispatch`, but expects delegate to return a Promise<object>
      */
-    dispatchAsync: function(mTyped) {
+    dispatchAsync: function(mTyped, ctx) {
       if (this._stateGuard.applied("disposed")) {
         return;
       }
 
       var handler = this._getVettedHandlerName(mTyped);
       if (handler) {
-        return this._delegate[handler](mTyped, this._contextDelegate(mTyped));
+        return this._delegate[handler](mTyped, this._contextDelegate(mTyped, ctx));
       }
     },
 

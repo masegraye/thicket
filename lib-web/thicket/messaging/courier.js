@@ -113,13 +113,13 @@ var mod = function(
     },
 
     _onOneShotMessage: function(msg) {
-      this._oneShotDispatcher.dispatch(msg.body);
+      this._oneShotDispatcher.dispatch(msg.body, msg);
     },
 
 
     _onRequestReplyMessage: function(msg) {
       this._requestReplyDispatcher
-        .dispatchAsync(msg.body)
+        .dispatchAsync(msg.body, msg)
         .bind({
           mbox: this._mailbox,
           err: null,
