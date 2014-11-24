@@ -65,14 +65,14 @@ var mod = function(
       });
     }),
 
-    sendAndReceive: Promise.method(function(to, msg) {
+    sendAndReceive: Promise.method(function(to, msg, opts) {
       this._stateGuard.deny("disposed");
 
       return this._mailbox
         .sendAndReceive({
           to: to,
           body: msg
-        })
+        }, opts)
         .then(function(res) {
 
           if (res.body && res.body.mT === MSG_REPLY && res.body.body) {
