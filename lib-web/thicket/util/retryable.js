@@ -12,6 +12,8 @@ var mod = function(
 
   var Log = Logger.create("Retryable");
 
+  var DEFAULT_BACKOFF_CEILING = 60 * 1000 * 10; // 10 minutes
+
   var Retryable = function() {
     this.initialize.apply(this, arguments);
   };
@@ -37,6 +39,7 @@ var mod = function(
       var StrategyClass = BackoffStrategy[backoff.getOrError("strategy")];
 
       this._backoffStrategy = new StrategyClass(backoff.toObject());
+      this._backoffCeiling  = opts.getOrElse("backoffCeiling", DEFAULT_BACKOFF_CEILING);
       this._disposedGuard   = StateGuard.scoped("disposed");
 
       _.bindAll(this, "_attempt");
@@ -103,7 +106,7 @@ var mod = function(
           this._currentTry = nextTry;
 
           var time = this._backoffStrategy.time(this._currentTry);
-          this._scheduler.get().schedule(this._attempt, time);
+          this._scheduler.get().schedule(this._attempt, Math.min(time, this._backoffCeiling));
         })
         .caught(Retryable.Error.MaxRetriesError, function(err) {
           if (this._deferred.promise.isPending()) {
