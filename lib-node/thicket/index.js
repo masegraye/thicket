@@ -21,6 +21,16 @@ var mod = function(
     },
 
     {
+      module: require("./util/retryable"),
+      as: "retryable"
+    },
+
+    {
+      module: require("./util/timer"),
+      as: "timer"
+    },
+
+    {
       module: require("./core/dispatcher"),
       as: "dispatcher"
     },
