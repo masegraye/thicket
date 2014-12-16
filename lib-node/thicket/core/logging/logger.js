@@ -7,6 +7,12 @@ var mod = function(
   Options
 ) {
 
+  /**
+   * A Logger.
+   *
+   * Any appender provided to `addAppender` should have a .log method (see `ConsoleLogAppender`).
+   *
+   */
   var Logger = function() {
     this.initialize.apply(this, arguments);
   };

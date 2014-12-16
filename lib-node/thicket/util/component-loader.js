@@ -5,6 +5,15 @@ var factory = function(
   _,
   Options
 ) {
+
+  /**
+   * Like a `ComponentRegistry`, but modules are loaded on-demand rather than eagerly required and aliased. This is
+   * done by providing the top-level `require` method as an initialization parameter, which maintains the appropriate
+   * path context for resolving relative imports later.
+   *
+   * Note this only works in Node, not environments like Browserify, which need to eagerly resolve all required
+   * modules via static analysis. For that, use the `ComponentRegistry`.
+   */
   var ComponentLoader = function() {
     this.initialize.apply(this, arguments);
   };

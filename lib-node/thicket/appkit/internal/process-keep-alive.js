@@ -11,6 +11,11 @@ var mod = function(
 
   var Log = Logger.create("ProcessKeepAlive");
 
+  /**
+   * Keeps a (node) process "alive" by keeping at least one bit of (noop) work scheduled for execution.
+   *
+   * @constructor
+   */
   var ProcessKeepAlive = function() {
     this.initialize.apply(this, arguments);
   };

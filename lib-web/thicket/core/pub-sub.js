@@ -5,6 +5,14 @@ var mod = function(
   _
 ) {
 
+  /**
+   * A mixin enabling pubsub on an object. To use, copy the singleton methods into the object or object prototype:
+   *
+   *     var myObj = _.extend({}, PubSub);
+   *     myObj.on('foo', function(evt) { console.log(evt) }); // logs `{ 'some': 'data' }`
+   *     myObj.notify('foo', { some: 'data' });
+   *
+   */
   var PubSub = {
     on: function(eventName, handler, context) {
       var bucket = this.__pubSubBucket(eventName);

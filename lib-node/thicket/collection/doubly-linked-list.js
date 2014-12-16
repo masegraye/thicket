@@ -6,6 +6,10 @@ var mod = function(
   Options
 ) {
 
+  /**
+   * A doubly-linked list implementation.
+   *
+   */
   var DoublyLinkedList = function() {
     this.initialize.apply(this, arguments);
   };

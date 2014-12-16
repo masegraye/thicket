@@ -5,6 +5,14 @@ var mod = function(
   _
 ) {
 
+  /**
+   * A simple timer.
+   *
+   * Start it, stop it, get the delta.
+   *
+   * Or, start it, and repeatedly call `lap` for the time between the last `lap` call and now.
+   *
+   */
   var Timer = function() {
     this.initialize.apply(this, arguments);
   };

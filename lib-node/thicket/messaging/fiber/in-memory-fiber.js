@@ -11,6 +11,17 @@ var mod = function(
   Logger
 ) {
 
+  /**
+   * A fiber dictates how an Exchange's messages are actually sent. When someone requests a mailbox from an Exchange,
+   * that exchange registers itself as an entity with that address on the mailbox's behalf. When a message for that
+   * address is received by the fiber, it routes it to the exchange, which forwards it to the mailbox, and onward.
+   *
+   * There's a picture in `Courier` that illustrates the component layout.
+   *
+   * An `InMemoryFiber` only has local entities, and only performs local dispatch. A `LinkableFiber` is an
+   * `InMemoryFiber` which will forward messages to its linked fibers in the event a local entity hasn't been
+   * registered with the address for which a message is bound.
+   */
   var InMemoryFiber = (function() {
     var Klass = function() {
       this.initialize.apply(this, arguments);

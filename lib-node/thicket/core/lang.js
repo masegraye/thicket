@@ -7,6 +7,9 @@ var factory = function(
   Options
 ) {
 
+  /**
+   * A utility singleton for "language extensions".
+   */
   var Lang = function() {
     this.initialize.apply(this, arguments);
   };
@@ -106,7 +109,7 @@ var factory = function(
       return {
         promise: p,
         resolve: res,
-        reject: rej
+        reject:  rej
       };
     }
   });

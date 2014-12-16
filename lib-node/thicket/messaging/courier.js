@@ -12,6 +12,35 @@ var mod = function(
   Dispatcher
 ) {
 
+  /**
+   * A Courier makes it easy for a maibox owner to deal with sending and receiving messages. It has a slightly more
+   * natural interface for sending messages (`send(to, msg)`, `sendAndReceive(to, msg, opts)`), and automatically
+   * dispatches incoming messages to delegate methods.
+   *
+   * Common usage is for a mailbox owner (let's call it "owner A") to create a new Courier ("courier A"), setting the
+   * `delegate` to itself, and the `mailbox` to the mailbox ("mailbox A") it owns. When a remote mailbox's
+   * ("mailbox B") courier ("courier B") performs a `courier.send("A", { mT: "foo" })`, it will be automatically
+   * dispatched to "owner A"'s `onMsgFoo` method, if present.
+   *
+   * If "courier B" performs a `courier.sendAndReceive("A", { mT: "bar" })`, it will get set to "owner A"'s
+   * `onReqBar` method, and the resulting promise's fulfilled value will be dispatched back to "courier B" as the
+   * fulfilled result of the originating `sendAndReceive`.
+   *
+   * A `send` or `sendAndReceive` call initiated on CourierB will result in a method call on DelegateA, and vice versa.
+   *
+   *  DelegateA <-> CourierA <-> MailboxA <-> ExchangeA
+   *                                            ^
+   *                                             \
+   *                                              v
+   *                                           Fiber
+   *                                            ^
+   *                                             \
+   *                                              v
+   *                                           ExchangeB <-> MailboxB <-> CourierB <-> DelegateB
+   *
+   *
+   *
+   */
   var Courier = function() {
     this.initialize.apply(this, arguments);
   };

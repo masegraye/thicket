@@ -8,6 +8,8 @@ var mod = function(
 ) {
 
   /**
+   * See `UnitSequencer` for a high-level explanation of Sequencer semantics.
+   *
    * A Sequencer which advances by reading from a Clock.
    * Note that this ClockSequencer relies on the Clock protocol, which
    * only provides `Clock#getTime()`. It does not modify the clock itself.

@@ -8,6 +8,10 @@ var mod = function(
   Channel
 ) {
 
+  /**
+   * A channel which listens to other channels, and forwards their messages as through published to this channel
+   *
+   */
   var CompositeChannel = function() {
     this.initialize.apply(this, arguments);
   };

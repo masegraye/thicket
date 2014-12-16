@@ -7,6 +7,15 @@ var mod = function(
   Options
 ) {
 
+  /**
+   * See `UnitSequencer` for a high-level explanation of Sequencer semantics.
+   *
+   * A Sequencer which delegates to another sequencer for both `advance` and `value`, and also forwards `advance` to
+   * other `target` sequencers. It is the logical complement of a `DelegatingCompositeSequencer`, which derives its `value` from
+   * its underlying `sequencers`.
+   *
+   *
+   */
   var DelegatingForwardingSequencer = function() {
     this.initialize.apply(this, arguments);
   };

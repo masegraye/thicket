@@ -8,6 +8,10 @@ var mod = function(
   LRUHashMap
 ) {
 
+  /**
+   * A Data Store with an LRU eviction policy.
+   *
+   */
   var LRUDataStore = function() {
     this.initialize.apply(this, arguments);
   };

@@ -8,6 +8,10 @@ var mod = function(
   DoublyLinkedList
 ) {
 
+  /**
+   * An in-memory hash map with an LRU eviction policy.
+   *
+   */
   var LRUHashMap = function() {
     this.initialize.apply(this, arguments);
   };

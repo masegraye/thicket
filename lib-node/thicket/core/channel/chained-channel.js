@@ -8,6 +8,7 @@ var mod = function(
   Channel
 ) {
 
+  // FIXME: Delete this in favor of CompositeChannel
   var ChainedChannel = function() {
     this.initialize.apply(this, arguments);
   };

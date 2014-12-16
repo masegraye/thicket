@@ -114,6 +114,7 @@ var mod = function(
       return prefix + suffix.charAt(0).toUpperCase() + suffix.substr(1);
     },
 
+    // FIXME: Check for "reserved" mTypes (_elseSuffix, _malformedSuffix, etc), log warning
     _getVettedHandlerName: function(mTyped) {
       var mT = mTyped.mT,
           prefix = this._prefix,

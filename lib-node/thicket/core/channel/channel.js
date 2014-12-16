@@ -9,6 +9,16 @@ var mod = function(
   StateGuard
 ) {
 
+  /**
+   * A channel is a path through which messages flow.
+   *
+   * Channels are meant to have a single publisher, multiple subscribers.
+   *
+   * This is "enforced" using a sentinel. The same sentinel provided during
+   * instantiation must be used when calling `publish`, else an exception
+   * is raised.
+   *
+   */
   var Channel = function() {
     this.initialize.apply(this, arguments);
   };

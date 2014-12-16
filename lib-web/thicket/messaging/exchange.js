@@ -20,6 +20,25 @@ var mod = function(
   Runtime
   ) {
 
+  /**
+   * An `Exchange` vends mailboxes. Messages sent from a mailbox are managed by the Exchange which vended the mailbox.
+   * The Exchange handles the work of:
+   *
+   *   1. Wrapping the message in the appropriate message envelope for the verb used (`send`, `sendAndReceive`,
+   *      `reply`)
+   *   2. Pairing a given `reply` with the originating `sendAndReceive` call, and fulfilling the associated result
+   *      promise.
+   *   3. Handling message timeouts for `sendAndReceive` calls. When a message times out, the promise associated with
+   *      the result is canceled.
+   *
+   * The actual work of sending messages is handled by an Exchange's underlying `Fiber`. The default fiber is
+   * an `InMemoryFiber`, which performs only local dispatch.
+   *
+   * Generally speaking, mailboxes sharing an underlying fiber (either by both being spawned from the same mailbox,
+   * or being spawned by exchanges sharing the same fiber) can send messages to each other, provided they know
+   * each other's addresses.
+   *
+   */
   var Exchange = function() {
     this.initialize.apply(this, arguments);
   };

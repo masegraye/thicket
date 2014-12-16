@@ -2,7 +2,7 @@
 "use strict";
 
 /**
- * Exports a singleton
+ * Utility for generating V4 UUIDs. Exports a singleton.
  */
 
 var mod = function(

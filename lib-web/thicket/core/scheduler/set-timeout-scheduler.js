@@ -14,6 +14,7 @@ var mod = function(
     runSoon: function(fn) {
       this.schedule(fn);
     },
+
     schedule: function(fn, delay) {
       delay = delay || 1;
       return setTimeout(fn, delay);

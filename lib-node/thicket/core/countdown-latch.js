@@ -4,6 +4,11 @@ var mod = function (
   _
   ) {
 
+  /**
+   * A device which calls the provided completionCallback after `steps` calls to `CountdownLatch#step()`.
+   *
+   */
+
   var CountdownLatch = function () {
         this.initialize.apply(this, arguments);
       },
