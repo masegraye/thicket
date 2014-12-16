@@ -12,7 +12,13 @@ var mod = function(
 ) {
 
   /**
-   * LinkableFiber is a reference implementation for implementing a multi-fiber "fabric".
+   * LinkableFiber is a reference implementation for implementing a multi-fiber "fabric". Whereas an `InMemoryFiber`
+   * only has local entities, and only performs local dispatch, a `LinkableFiber` is an `InMemoryFiber` which will
+   * forward messages to its linked fibers in the event a local entity hasn't been registered with the address for
+   * which a message is bound.
+   *
+   * For an example of how this might work in a multi-process or multi-machine environment, see the
+   * `thicket-zmq-fiber` node module.
    */
   var LinkableFiber = function() {
     this.initialize.apply(this, arguments);

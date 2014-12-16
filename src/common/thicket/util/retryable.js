@@ -14,6 +14,31 @@ var mod = function(
 
   var DEFAULT_BACKOFF_CEILING = 60 * 1000 * 10; // 10 minutes
 
+
+  /**
+   * A device which retries the provided Promisified `task` until it completes without error, or `retries` times
+   * (default is forever). The results of the `task` are accessible via the `result()` promise, which will be fulfilled
+   * or rejected on success or error (such as Retryable.Error.MaxRetriesError or Promise.CancellationError).
+   *
+   * If an error occurs, the `task` is retried after some time, as determined by the `backoff` `strategy`, of which two
+   * are supported: `Retryable.Backoff.Linear` and `Retryable.Backoff.Exponential`. The default strategy is
+   * `Retryable.Backoff.Linear`, with the period determined by:
+   *
+   * `coefficient * attemptNum * factor`
+   *
+   * Default options for Linear backoff are: `factor` = 1, `coefficient` = 250.
+   *
+   * For `Retryable.Backoff.Exponential, the period is determined by:
+   *
+   * `coefficient * Math.pow(base, attemptNum)`
+   *
+   * Default options for Exponential backoff are: `coefficient = 250`, `base = 2`.
+   *
+   * Regardless of backoff strategy, a `backoffCeiling` can be provided. If provided, this is the upper bound of
+   * the period between unsuccessful task runs. This allows, for example, an exponential backoff up to a ceiling (e.g.,
+   * five minutes), after which point the period will simply be the ceiling (e.g., five minutes).
+   *
+   */
   var Retryable = function() {
     this.initialize.apply(this, arguments);
   };

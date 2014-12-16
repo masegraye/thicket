@@ -6,6 +6,12 @@ var mod = function(
   Options
 ) {
 
+  /**
+   * A registry for modules. Allows an NPM package to expose internal modules without needing to know the explicit
+   * file path, which may change from release to release. Each module may have one or more aliases which can be
+   * used to request it later.
+   *
+   */
   var ComponentRegistry = function() {
     this.initialize.apply(this, arguments);
   };

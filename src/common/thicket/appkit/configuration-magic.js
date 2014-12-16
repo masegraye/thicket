@@ -6,6 +6,10 @@ var mod = function(
   ScopedConfigurationResolver
 ) {
 
+  /**
+   * A utility "class" for configuration-related functionality.
+   * @constructor
+   */
   var ConfigurationMagic = function() {
     this.initialize.apply(this, arguments);
   };
@@ -15,6 +19,10 @@ var mod = function(
   });
 
   _.extend(ConfigurationMagic, {
+    /**
+     * Returns a resolved configuration, given multiple configuration documents and a set of scopes. See
+     * `ScopedConfigurationResolver`.
+     */
     resolveConfig: function(scopes, configObjects) {
       var r = new ScopedConfigurationResolver();
       _.each(configObjects, function(c) {

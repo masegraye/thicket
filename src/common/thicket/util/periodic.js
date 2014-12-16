@@ -11,6 +11,12 @@ var mod = function(
   Logger
 ) {
 
+  /**
+   * Upon `start()`, runs the provided Promisified `task` every `interval` milliseconds until `stop()` is called. The results
+   * of each `task` are sent along the `egressChannel()`, as `msg.result` or `msg.err`.
+   *
+   * @constructor
+   */
   var Periodic = function() {
     this.initialize.apply(this, arguments);
   };

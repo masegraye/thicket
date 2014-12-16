@@ -7,6 +7,12 @@ var mod = function(
   Options
 ) {
 
+  /**
+   * A `Sequencer` advances its underlying sequence on `advance()`, and provides that value on `value()`. The only
+   * guarantee a sequencer provides is that `value()` is always non-decreasing over time (i.e., after multiple calls
+   * to `advance()`, a sequencer will never be smaller than the previous call - but it may also not be bigger).
+   *
+   */
   var UnitSequencer = function() {
     this.initialize.apply(this, arguments);
   };

@@ -6,6 +6,10 @@ var mod = function(
   Options
 ) {
 
+  /**
+   * An appender which logs to the global `console`.
+   *
+   */
   var ConsoleLogAppender = function() {
     this.initialize.apply(this, arguments);
   };

@@ -8,6 +8,8 @@ var mod = function(
 ) {
 
   /**
+   * See `UnitSequencer` for a high-level explanation of Sequencer semantics.
+   *
    * A UnitSequencer which reports its sequence summed with the sequences
    * of its internal collection of sequencers.
    *
