@@ -24,8 +24,16 @@ var mod = function(
       this._name         = opts.getOrElse("name", "Default");
       this._logLevel     = opts.getOrElse("logLevel", LogUtil.Level.Info);
       this._parent       = opts.getOrElseFn("refParent", function() { return Ref(null) });
-
+      this._muted        = {};
       this._appenders = [];
+    },
+
+    mute: function(name) {
+      this._muted[name] = true;
+    },
+
+    unmute: function(name) {
+      delete this._muted[name];
     },
 
     trace: function() {
@@ -111,8 +119,13 @@ var mod = function(
       this._logWithMetadata([], logLevel, logArgs);
     },
 
+    _isMuted: function(name) {
+      return !!this._muted[name];
+    },
+
     _logWithMetadata: function(descendants, logLevel, args) {
-      if (this.isLogLevelEnabled(logLevel)) {
+      var leaf = descendants[descendants.length - 1] || this._name;
+      if (this.isLogLevelEnabled(logLevel) && !this._isMuted(leaf)) {
         _.each(this._appenders, function(appender) {
           appender.log(this._name, descendants, logLevel, LogUtil._Label[logLevel], args);
         }, this);
