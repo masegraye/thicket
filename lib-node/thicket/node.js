@@ -11,6 +11,14 @@ module.exports = function(c) {
     {
       module: require("./scheduler/node-scheduler"),
       as: "scheduler"
+    },
+    {
+      module: require("./messaging/fiber/tcp-fiber"),
+      as: "messaging/fibers/tcp"
+    },
+    {
+      module: require("./messaging/internals/message-pusher"),
+      as: "messaging/internals/message-pusher"
     }
   ]);
 };
