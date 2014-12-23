@@ -40,7 +40,7 @@ var mod = function(
         var finalArgs = {}, argName, argVal;
         for (var i = 0; i < args.length; i++) {
           argName = args[i];
-          argVal = methodArgs[argName];
+          argVal = methodArgs[i];
           if (typeof argVal === "undefined") {
             if (defaults.hasOwnProperty(argName)) {
               finalArgs[argName] = defaults[argName];

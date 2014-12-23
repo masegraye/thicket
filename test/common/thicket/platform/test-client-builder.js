@@ -17,6 +17,10 @@ describe("ClientBuilder", function() {
           onReqFoo: Promise.method(function(msg) {
             assert.equal(msg.zoo, "zzz");
             return "bar";
+          }),
+          onReqDoo: Promise.method(function(msg) {
+            assert.equal(msg.doo, "doo");
+            return "woo";
           })
         },
         serviceMailbox = exchange.mailbox("service"),
@@ -36,6 +40,11 @@ describe("ClientBuilder", function() {
               defaults: {
                 zoo: "zzz"
               }
+            },
+            doo: {
+              name: "doo",
+              mType: "doo",
+              args: ["doo"]
             }
           }
         }),
@@ -49,6 +58,10 @@ describe("ClientBuilder", function() {
     client.boo()
       .then(function(res) {
         assert.equal(res, "bar");
+        return client.doo("doo");
+      })
+      .then(function(res) {
+        assert.equal(res, "woo");
       })
       .then(function() {
         done();
