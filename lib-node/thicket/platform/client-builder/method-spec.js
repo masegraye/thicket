@@ -9,7 +9,6 @@ var mod = function(
     defaults: {
       args:         [],
       defaults:     {},
-      mType:        null,
       requestReply: true
     }
   });
