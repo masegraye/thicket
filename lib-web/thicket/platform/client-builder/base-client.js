@@ -30,9 +30,8 @@ var mod = function(
       });
     },
 
-    __registerMethod: function(methodSpec) {
-      var name          = methodSpec.name(),
-          args          = methodSpec.args(),
+    __registerMethod: function(name, methodSpec) {
+      var args          = methodSpec.args(),
           defaults      = methodSpec.defaults(),
           mType         = methodSpec.mType() || name,
           courierMethod = methodSpec.requestReply() ? "sendAndReceive" : "send";

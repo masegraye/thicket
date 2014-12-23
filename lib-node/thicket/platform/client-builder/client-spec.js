@@ -14,9 +14,10 @@ var mod = function(
   _.extend(ClientSpec.prototype, {
     initialize: function(opts) {
       opts = Options.fromObject(opts);
-      this._methodSpecs = _.map(opts.getOrElse("methods", []), function(m) {
-        return new MethodSpec(m);
-      });
+      this._methodSpecs = _.reduce(opts.getOrElse("methods", {}), function(memo, spec, name) {
+        memo[name] = new MethodSpec(spec);
+        return memo;
+      }, {});
       this._initOptions = opts.getOrElse("initOptions", {});
     },
 

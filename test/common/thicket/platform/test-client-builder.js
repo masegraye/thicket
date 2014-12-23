@@ -28,8 +28,8 @@ describe("ClientBuilder", function() {
           initOptions: {
             serviceIdentity: "service"
           },
-          methods: [
-            {
+          methods: {
+            boo: {
               name: "boo",
               mType: "foo",
               args: ["zoo"],
@@ -37,7 +37,7 @@ describe("ClientBuilder", function() {
                 zoo: "zzz"
               }
             }
-          ]
+          }
         }),
         builder = new ClientBuilder({
           spec: spec

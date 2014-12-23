@@ -19,8 +19,8 @@ var mod = function(
 
     build: function(opts) {
       var c = new BaseClient(_.extend({}, this._spec.initOptions(), opts));
-      _.each(this._spec.methods(), function(spec) {
-        c.__registerMethod(spec);
+      _.each(this._spec.methods(), function(spec, name) {
+        c.__registerMethod(name, spec);
       });
       return c;
     }

@@ -5,7 +5,7 @@ var mod = function(
   Lang
 ) {
 
-  var MethodSpec = Lang.pojoClass(["name", "args", "defaults", "mType", "requestReply"], {
+  var MethodSpec = Lang.pojoClass(["args", "defaults", "mType", "requestReply"], {
     defaults: {
       args:         [],
       defaults:     {},
