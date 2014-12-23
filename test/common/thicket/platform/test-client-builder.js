@@ -34,7 +34,6 @@ describe("ClientBuilder", function() {
           },
           methods: {
             boo: {
-              name: "boo",
               mType: "foo",
               args: ["zoo"],
               defaults: {
@@ -42,9 +41,12 @@ describe("ClientBuilder", function() {
               }
             },
             doo: {
-              name: "doo",
               mType: "doo",
               args: ["doo"]
+            },
+            eoo: {
+              mType: "eoo",
+              args: ["eoo"]
             }
           }
         }),
@@ -53,7 +55,8 @@ describe("ClientBuilder", function() {
         }),
         client = builder.build({
           exchange: exchange
-        });
+        }),
+        errCount = 0;
 
     client.boo()
       .then(function(res) {
@@ -62,8 +65,14 @@ describe("ClientBuilder", function() {
       })
       .then(function(res) {
         assert.equal(res, "woo");
+        return client.eoo();
+      })
+      .catch(function(err) {
+        assert.ok(err);
+        errCount++;
       })
       .then(function() {
+        assert.equal(errCount, 1);
         done();
       })
       .caught(function(err) {
