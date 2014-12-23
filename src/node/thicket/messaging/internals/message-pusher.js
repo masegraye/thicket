@@ -21,7 +21,7 @@ var mod = function(
       mT: "StreamError"
     };
   };
-  
+
   /**
    * Warning: Experimental
    *

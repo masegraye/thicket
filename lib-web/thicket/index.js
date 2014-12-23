@@ -210,6 +210,16 @@ var mod = function(
     {
       module: require("./core/serde/json-serde"),
       as: ["serde/json", "json-serde"]
+    },
+
+    {
+      module: require("./platform/client-builder/client-builder"),
+      as: "experimental/platform/client-builder"
+    },
+
+    {
+      module: require("./platform/client-builder/client-spec"),
+      as: "experimental/platform/client-spec"
     }
   ]);
 
