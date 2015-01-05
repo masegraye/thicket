@@ -98,6 +98,16 @@ var mod = function(
     },
 
     {
+      module: require("./collection/defaulting-hash-map"),
+      as: "defaulting-hash-map"
+    },
+
+    {
+      module: require("./collection/multi-map"),
+      as: "multi-map"
+    },
+
+    {
       module: require("./collection/lru-hash-map"),
       as: "lru-hash-map"
     },

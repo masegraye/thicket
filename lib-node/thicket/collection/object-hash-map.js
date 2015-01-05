@@ -44,8 +44,23 @@ var mod = function(
     clear: function() {
       this._store = {};
     },
+    keys: function() {
+      return _
+        .chain(this._store)
+        .keys()
+        .map(_.bind(function(key) {
+          return this._unmakeKey(key);
+        }, this))
+        .value();
+    },
+    values: function() {
+      return _.values(this._store);
+    },
     _makeKey: function(key) {
       return this._keyPrefix + key;
+    },
+    _unmakeKey: function(madeKey) {
+      return madeKey.substr(this._keyPrefix.length);
     }
   });
 
