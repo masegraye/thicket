@@ -97,7 +97,7 @@ var mod = function(
       if (this._handler) {
         this._handler.apply(this._context, args);
       } else {
-        console.log("WTF");
+        // Something went wrong here...
       }
     },
     dispose: function() {
