@@ -82,4 +82,15 @@ describe("Logger", function() {
     log.trace("foo");
     assert.equal(logCount, 5);
   });
+
+  it("should respect log levels", function() {
+    Logger.resetRootLogger();
+    var loggerOne = Logger.create("ONE"),
+        loggerTwo = Logger.create("TWO", { parent: loggerOne });
+
+    loggerOne.setLogLevel("Trace");
+    assert.ok(!Logger.root().isTraceEnabled(), "trace is not enabled");
+    assert.ok(loggerOne.isTraceEnabled(), "one is trace");
+    assert.ok(loggerTwo.isTraceEnabled(), "two is trace because one is trace");
+  });
 });

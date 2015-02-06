@@ -86,7 +86,12 @@ var mod = function(
 
     isLogLevelEnabled: function(logLevel) {
       var coercedLogLevel = b(logLevel);
-      return (this._logLevel & coercedLogLevel) === coercedLogLevel;
+      return this._isCoercedLogLevelEnabledInTree(coercedLogLevel);
+    },
+
+    _isCoercedLogLevelEnabledInTree: function(coercedLogLevel) {
+      return ((this._logLevel & coercedLogLevel) === coercedLogLevel) ||
+        (this._parent.get() && this._parent.get()._isCoercedLogLevelEnabledInTree(coercedLogLevel));
     },
 
     addAppender: function(appender) {
