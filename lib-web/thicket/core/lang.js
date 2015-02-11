@@ -83,6 +83,13 @@ var factory = function(
               this[toAttributeName(attr)] = opts.getOrError(attr);
             }
           }, this);
+        },
+
+        toObj: function() {
+          return _.inject(attributes, function(m, k) {
+            m[k] = this[k]();
+            return m;
+          }, {}, this);
         }
       });
 

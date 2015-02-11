@@ -28,6 +28,7 @@ describe("Lang", function() {
       assert.equal(instance.two(), 3);
       assert.equal(instance.one(), 1);
 
+      assert.deepEqual({one: 1, two: 3}, instance.toObj());
     });
 
     it("should support optional options", function() {
