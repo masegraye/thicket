@@ -66,4 +66,20 @@ describe("Lang", function() {
       assert.ok(instance instanceof MyKlass);
     });
   });
+
+  it("should build an mType factory function", function() {
+    var factory = Lang.makeMTypeFactory("foo", ["bar", "baz"], {
+      defaults: {
+        baz: 1
+      }
+    });
+
+    var b = factory({
+      bar: 10
+    });
+
+    assert.equal(10, b.bar);
+    assert.equal(1, b.baz);
+    assert.equal("foo", b.mType);
+  });
 });

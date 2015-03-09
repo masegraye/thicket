@@ -118,6 +118,36 @@ var factory = function(
         resolve: res,
         reject:  rej
       };
+    },
+
+    /**
+     * I suddenly regret using 'new' for everything. This function returns an mType factory function.
+     *
+     * @param mType
+     * @param attributes
+     * @param options
+     * @returns {Function}
+     */
+    makeMTypeFactory: function(mType, attributes, options) {
+      attributes = attributes || [];
+      options    = options || {};
+      options.defaults = _.extend({}, options.defaults || {}, {
+        mType: mType
+      });
+      attributes.unshift("mType");
+
+      var pojoClass = Lang.pojoClass(attributes, options);
+
+      return function() {
+        var args = _.toArray(arguments);
+
+        var f = function() {
+          return pojoClass.apply(this, args);
+        }
+
+        f.prototype = pojoClass.prototype;
+        return (new f()).toObj();
+      }
     }
   });
 
