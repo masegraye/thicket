@@ -128,13 +128,13 @@ var factory = function(
      * @param options
      * @returns {Function}
      */
-    makeMTypeFactory: function(mType, attributes, options) {
+    makeMTypeBuilder: function(mType, attributes, options) {
       attributes = attributes || [];
       options    = options || {};
       options.defaults = _.extend({}, options.defaults || {}, {
-        mType: mType
+        mT: mType
       });
-      attributes.unshift("mType");
+      attributes.unshift("mT");
 
       var pojoClass = Lang.pojoClass(attributes, options);
 

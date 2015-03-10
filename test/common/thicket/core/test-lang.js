@@ -68,7 +68,7 @@ describe("Lang", function() {
   });
 
   it("should build an mType factory function", function() {
-    var factory = Lang.makeMTypeFactory("foo", ["bar", "baz"], {
+    var factory = Lang.makeMTypeBuilder("foo", ["bar", "baz"], {
       defaults: {
         baz: 1
       }
@@ -80,6 +80,6 @@ describe("Lang", function() {
 
     assert.equal(10, b.bar);
     assert.equal(1, b.baz);
-    assert.equal("foo", b.mType);
+    assert.equal("foo", b.mT);
   });
 });
