@@ -3,6 +3,7 @@
 
 var mod = function(
   _,
+  Promise,
   M,
   Options,
   StateGuard
@@ -82,7 +83,7 @@ var mod = function(
     /**
      * Like `dispatch`, but expects delegate to return a Promise<object>
      */
-    dispatchAsync: function(mTyped, ctx) {
+    dispatchAsync: Promise.method(function(mTyped, ctx) {
       if (this._stateGuard.applied("disposed")) {
         return;
       }
@@ -90,8 +91,12 @@ var mod = function(
       var handler = this._getVettedHandlerName(mTyped);
       if (handler) {
         return this._delegate[handler](mTyped, this._contextDelegate(mTyped, ctx));
+      } else {
+        // Not having a handler when a reply is requested is the same as returning
+        // a promise that never resolves.
+        return new Promise(function(resolve) {});
       }
-    },
+    }),
 
     dispose: function() {
       if (this._stateGuard.applied("disposed")) {
@@ -143,6 +148,7 @@ var mod = function(
 
 module.exports = mod(
   require("underscore"),
+  require("bluebird"),
   require("mori"),
   require("./options"),
   require("./state-guard")
