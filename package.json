@@ -6,7 +6,7 @@
   "author": "Mason Browne <m.public@academy15.com>",
   "license": "MIT",
   "dependencies": {
-    "bluebird": "2.0.0",
+    "bluebird": "^2.11.0",
     "js-yaml": "^3.2.3",
     "mori": "^0.2.9",
     "nopt": "^4.0.1",
