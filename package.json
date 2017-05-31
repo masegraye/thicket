@@ -10,7 +10,7 @@
     "js-yaml": "^3.2.3",
     "mori": "^0.2.9",
     "nopt": "^4.0.1",
-    "underscore": "= 1.7.0"
+    "underscore": "^1.7.0"
   },
   "devDependencies": {
     "grunt": "0.4.5",
