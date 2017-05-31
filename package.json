@@ -6,11 +6,11 @@
   "author": "Mason Browne <m.public@academy15.com>",
   "license": "MIT",
   "dependencies": {
-    "bluebird": "= 2.2.2",
+    "bluebird": "^2.11.0",
     "js-yaml": "^3.2.3",
     "mori": "^0.2.9",
-    "nopt": "= 4.0.1",
-    "underscore": "= 1.7.0"
+    "nopt": "^4.0.1",
+    "underscore": "^1.7.0"
   },
   "devDependencies": {
     "grunt": "0.4.5",
