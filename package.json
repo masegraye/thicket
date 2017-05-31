@@ -9,7 +9,7 @@
     "bluebird": "= 2.2.2",
     "js-yaml": "^3.2.3",
     "mori": "^0.2.9",
-    "nopt": "= 3.0.1",
+    "nopt": "= 4.0.1",
     "underscore": "= 1.7.0"
   },
   "devDependencies": {
